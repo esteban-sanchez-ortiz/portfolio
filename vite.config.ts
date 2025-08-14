@@ -4,6 +4,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import svgr from 'vite-plugin-svgr'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 export default defineConfig({
   plugins: [
@@ -34,6 +35,7 @@ export default defineConfig({
         },
       },
     }),
+    visualizer({ filename: 'stats.html', brotliSize: true, gzipSize: true }),
   ],
   resolve: {
     alias: {
@@ -43,4 +45,6 @@ export default defineConfig({
       '@assets': path.resolve(__dirname, 'src/assets'),
     },
   },
+  build: { target: 'es2020', cssCodeSplit: true, sourcemap: true },
+  base: '/portfolio/',
 })
