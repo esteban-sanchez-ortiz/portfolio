@@ -1,0 +1,79 @@
+import { motion } from 'framer-motion'
+
+import { type CardProjectProps } from './CardProject.types'
+
+export const CardProject = ({ project }: CardProjectProps) => {
+  if (project.soon) {
+    return (
+      <div className="group relative overflow-hidden rounded-2xl border border-zinc-800/60 bg-zinc-950/60 backdrop-blur-sm">
+        <div className="aspect-[16/10] w-full bg-[radial-gradient(circle_at_30%_20%,#3f3f46_0%,#18181b_60%)]" />
+        <div className="p-6">
+          <h3 className="text-lg font-semibold text-zinc-200">{project.title}</h3>
+          <p className="mt-2 text-zinc-500">{project.blurb}</p>
+          <div className="mt-6 h-9 w-24 grid place-items-center rounded-full border border-dashed border-zinc-700/80 text-xs text-zinc-500">
+            Soon
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <motion.article
+      whileHover={{ y: -4 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+      className="group relative overflow-hidden rounded-2xl border border-zinc-800/60 bg-zinc-900/40 backdrop-blur-sm"
+    >
+      {project.image && (
+        <div className="relative aspect-[16/10] w-full overflow-hidden">
+          <img
+            src={project.image}
+            alt={`${project.title} cover`}
+            loading="lazy"
+            className="h-full w-full object-cover transition duration-500 saturate-90 brightness-95 group-hover:scale-[1.02] group-hover:saturate-100"
+          />
+        </div>
+      )}
+
+      <div className="p-6">
+        <h3 className="text-xl font-bold text-white">{project.title}</h3>
+        <p className="mt-2 text-zinc-400">{project.blurb}</p>
+
+        <ul className="mt-4 flex flex-wrap gap-2">
+          {project.tech.map(t => (
+            <li
+              key={t.name}
+              className="inline-flex items-center gap-2 rounded-full border border-zinc-700/70 bg-black/40 px-3 py-1 text-xs text-zinc-300"
+            >
+              {t.icon ? <t.icon className="h-4 w-4" /> : null}
+              {t.name}
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-5 flex flex-wrap gap-3">
+          {project.demoUrl && (
+            <a
+              href={project.demoUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center justify-center rounded-full bg-white px-4 py-2 text-sm font-medium text-black hover:opacity-90"
+            >
+              Live Demo
+            </a>
+          )}
+          {project.codeUrl && (
+            <a
+              href={project.codeUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center justify-center rounded-full border border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-200 hover:bg-zinc-800/60"
+            >
+              View Code
+            </a>
+          )}
+        </div>
+      </div>
+    </motion.article>
+  )
+}

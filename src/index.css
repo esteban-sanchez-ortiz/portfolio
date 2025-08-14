@@ -1,0 +1,53 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-roulette-black: #0d0d0d;
+  --color-roulette-gray: #d8d8df;
+  --color-roulette-teal: #00b2a9;
+  --color-roulette-magenta: #c73866;
+}
+
+@keyframes dotpulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.85);
+    opacity: 0.7;
+  }
+}
+
+@layer base {
+  html {
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+  body {
+    letter-spacing: 0.001em;
+  }
+}
+
+.marquee {
+  display: flex;
+  gap: 2.5rem;
+  white-space: nowrap;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  backface-visibility: hidden;
+  animation: marquee var(--d) linear infinite;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(calc(-50% - var(--nudge)), 0, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    animation: none !important;
+  }
+}
