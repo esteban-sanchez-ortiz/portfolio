@@ -12,7 +12,7 @@ const EXPERIENCE = [
       'Cut manual bug‑hunting by ~30% via Playwright suites',
       'Shipped React + TS + Tailwind components library',
     ],
-    image: '/bearingai.svg',
+    image: 'bearingai.svg',
     url: 'https://bearing.ai',
   },
   {
@@ -23,7 +23,7 @@ const EXPERIENCE = [
     summary:
       'Maintained and evolved a multi‑tenant education platform focusing on stability and performance.',
     bullets: ['3k+ users, 1k+ active accounts', 'GraphQL + CI/CD improvements'],
-    image: '/perficient.svg',
+    image: 'perficient.svg',
     url: 'https://www.perficient.com/',
   },
   {
@@ -34,7 +34,7 @@ const EXPERIENCE = [
     summary:
       'Launched logistics and credit apps; led frontend and supported APIs for better performance.',
     bullets: ['~25% performance uplift', 'Angular + JS + C# stack'],
-    image: '/appinit.svg',
+    image: 'appinit.svg',
     url: 'https://appinit.co/',
   },
   {
@@ -48,7 +48,7 @@ const EXPERIENCE = [
       'Developed hybrid mobile apps with Ionic & JavaScript',
       'Handled deployment to mobile platforms',
     ],
-    image: '/solutto.webp',
+    image: 'solutto.webp',
     url: 'https://soluttoconsulting.com',
   },
 ]
