@@ -5,7 +5,7 @@ import { Icons } from '@components'
 export const CTA = () => {
   return (
     <motion.a
-      href="mailto:youremail@example.com"
+      href="mailto:esteban.sanchez.nt@gmail.com"
       initial={{ scale: 0 }}
       whileInView={{ scale: 1 }}
       transition={{ duration: 0.4 }}
