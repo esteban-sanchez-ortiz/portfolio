@@ -16,6 +16,7 @@ const GraphqlIcon = lazy(() => import('@assets/icons/graphql.svg?react'))
 const PostgresqlIcon = lazy(() => import('@assets/icons/postgresql.svg?react'))
 const DockerIcon = lazy(() => import('@assets/icons/docker.svg?react'))
 const SendIcon = lazy(() => import('@assets/icons/send.svg?react'))
+const ViteIcon = lazy(() => import('@assets/icons/vite.svg?react'))
 
 const withColor =
   (C: React.ComponentType<React.SVGProps<SVGSVGElement>>) =>
@@ -109,6 +110,11 @@ export const Icons: IconComponent = {
   Send: props => (
     <Suspense fallback={<span className="inline-block w-5 h-5" />}>
       {withColor(SendIcon)(props)}
+    </Suspense>
+  ),
+  Vite: props => (
+    <Suspense fallback={<span className="inline-block w-5 h-5" />}>
+      {withColor(ViteIcon)(props)}
     </Suspense>
   ),
 }

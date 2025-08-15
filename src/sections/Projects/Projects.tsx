@@ -15,6 +15,19 @@ const PROJECTS: Project[] = [
     demoUrl: 'https://autorizo-fe-production.up.railway.app/login',
     codeUrl: 'https://github.com/autorizo/grantly',
   },
+  {
+    title: 'My Portfolio',
+    blurb: 'Showcase of my work and projects.',
+    image: 'liquid2.jpg',
+    tech: [
+      { name: 'React', icon: Icons.React },
+      { name: 'TypeScript', icon: Icons.Typescript },
+      { name: 'Vite', icon: Icons.Vite },
+      { name: 'Tailwind CSS', icon: Icons.Tailwindcss },
+    ],
+    demoUrl: 'https://esteban-sanchez-ortiz.github.io/portfolio',
+    codeUrl: 'https://github.com/esteban-sanchez-ortiz/portfolio',
+  },
   { title: 'Next case study', blurb: 'Coming soon', tech: [], soon: true },
 ]
 
