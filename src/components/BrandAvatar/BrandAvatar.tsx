@@ -11,11 +11,11 @@ export const BrandAvatar = ({ src, company }: { src: string; company: string }) 
     brand.bgType === 'light' ? 'bg-white ring-1 ring-black/10' : 'bg-zinc-900 ring-1 ring-white/10'
 
   const handleImgError: React.ReactEventHandler<HTMLImageElement> = e => {
-    const img = e.currentTarget // <— mejor que e.target
+    const img = e.currentTarget
     img.style.display = 'none'
 
     const parent = img.parentElement
-    if (!parent) return // suficiente, si hay parent habrá classList
+    if (!parent) return
 
     parent.textContent = (company?.[0] ?? '?').toUpperCase()
     parent.classList.add('text-zinc-800', 'font-semibold')

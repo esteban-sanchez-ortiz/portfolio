@@ -1,70 +1,60 @@
-# React + TypeScript + Vite
+# Portfolio — Esteban Sánchez Ortiz
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive developer portfolio built with **Vite**, **React**, **TypeScript**, **Tailwind CSS**, and **Framer Motion**.  
+This site showcases my professional experience, selected work, technical skills, and personal brand.
 
-Currently, two official plugins are available:
+![Portfolio Preview](./public/preview.png) <!-- Replace with actual screenshot path -->
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Features
 
-## Expanding the ESLint configuration
+- **Responsive Design** — Optimized for both desktop and mobile devices.  
+- **Smooth Animations** — Powered by Framer Motion for fluid transitions and parallax effects.  
+- **Clean UI** — Minimalist, dark-themed layout with elegant typography and consistent spacing.  
+- **Performance Optimized** — Built with Vite for lightning-fast builds and hot-reload.  
+- **Reusable Components** — Modular and scalable architecture.  
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 📂 Project Structure
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+  ├── components/    # Reusable UI components
+  ├── sections/      # Site sections (Hero, Experience, Projects, Skills, Contact)
+  ├── assets/        # Static assets (images, icons)
+  ├── hooks/         # Custom React hooks
+  └── main.tsx       # App entry point
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🛠️ Tech Stack
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **React** — UI library  
+- **TypeScript** — Static typing  
+- **Vite** — Build tool  
+- **Tailwind CSS** — Utility-first CSS framework  
+- **Framer Motion** — Animations and transitions  
+- **Tech Icons** — For representing skills and technologies
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🚀 Getting Started
+
+### 1️⃣ Clone the repository
+```bash
+git clone https://github.com/esteban-sanchez-ortiz/portfolio.git
+cd portfolio
 ```
-# portfolio
+
+### 2️⃣ Install dependencies
+```bash
+npm install
+```
+
+### 3️⃣ Start development server
+```bash
+npm run dev
+```
+
+### 4️⃣ Build for production
+```bash
+npm run build
+```
+
+## 📄 License
+This project is licensed under the MIT License — see the [LICENSE](./LICENSE) file for details.

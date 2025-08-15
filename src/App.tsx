@@ -1,3 +1,4 @@
+import { useKonamiConfetti } from '@hooks'
 import {
   Banner,
   Hero,
@@ -11,8 +12,9 @@ import {
 } from '@sections'
 
 function App() {
+  useKonamiConfetti()
   return (
-    <div className="dark:bg-black">
+    <div className="dark:bg-black egg">
       <Background />
       <div className="relative z-10">
         <Banner />

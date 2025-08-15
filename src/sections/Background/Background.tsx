@@ -27,7 +27,6 @@ const BLOBS = [
   {
     id: 'b4',
     className:
-      // 👇 ojo al guion en translate-x-[65%]
       'absolute top-1/2 left-1/2 h-56 w-56 rounded-full bg-gradient-to-tr from-roulette-black to-roulette-magenta blur-3xl opacity-35 translate-x-[65%] translate-y-[70%]',
     animate: { x: [0, -15, 0], y: [0, 12, 0] },
     duration: 11,
