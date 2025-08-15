@@ -6,7 +6,7 @@ const mask =
 export function TechStrip() {
   return (
     <section
-      className="relative w-1/2 overflow-hidden py-10 sm:py-14 [--d:30s] [--nudge:0.5px]"
+      className="relative w-full md:w-1/2 overflow-hidden py-10 sm:py-14 [--d:30s] [--nudge:0.5px]"
       style={{ WebkitMaskImage: mask, maskImage: mask }}
     >
       <div className="marquee motion-reduce:animate-none">
