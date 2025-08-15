@@ -18,7 +18,16 @@ This site showcases my professional experience, selected work, technical skills,
 ```
 src/
   ├── components/    # Reusable UI components
-  ├── sections/      # Site sections (Hero, Experience, Projects, Skills, Contact)
+  ├── sections/      # Site sections
+  │   ├── Banner/
+  │   ├── Hero/
+  │   ├── WorkExperience/
+  │   ├── Projects/
+  │   ├── Background/
+  │   ├── Speech/
+  │   ├── Education/
+  │   ├── CTA/
+  │   └── Footer/
   ├── assets/        # Static assets (images, icons)
   ├── hooks/         # Custom React hooks
   └── main.tsx       # App entry point
