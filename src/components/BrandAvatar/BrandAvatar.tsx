@@ -22,6 +22,7 @@ export const BrandAvatar = ({ src, company }: { src: string; company: string }) 
         ].join(' ')}
         onError={e => {
           const el = e.target as HTMLImageElement
+          if (!el) return
           el.style.display = 'none'
           el.parentElement!.textContent = company[0]?.toUpperCase() ?? '?'
           el.parentElement!.classList.add('text-zinc-800', 'font-semibold')
