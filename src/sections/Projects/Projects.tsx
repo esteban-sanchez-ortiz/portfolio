@@ -22,8 +22,10 @@ export const Projects = () => {
   return (
     <section id="work" className="relative mx-auto max-w-6xl px-4 py-16">
       <header className="mb-8">
-        <h2 className="text-3xl font-extrabold tracking-tight text-white">Selected Work</h2>
-        <p className="mt-2 text-zinc-400">
+        <h2 className="text-3xl font-extrabold tracking-tight text-neutral-900 dark:text-white">
+          Portfolio
+        </h2>
+        <p className="mt-2 text-neutral-700 dark:text-zinc-400">
           A quick snapshot of what I build. More projects on the way.
         </p>
       </header>

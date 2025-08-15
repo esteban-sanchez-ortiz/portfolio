@@ -16,7 +16,6 @@ export const SparklesLayer = ({ count = 28, seed = 42 }: { count?: number; seed?
 
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0">
-      {/* keyframes con Tailwind arbitrary values */}
       <style>
         {`
         @keyframes sparklePulse {
@@ -28,7 +27,7 @@ export const SparklesLayer = ({ count = 28, seed = 42 }: { count?: number; seed?
       {positions.map(p => (
         <div
           key={p.id}
-          className="absolute h-1.5 w-1.5 rounded-full shadow-[0_0_6px_rgba(255,255,255,0.8)] bg-white/70 [will-change:transform,opacity]"
+          className="absolute h-1.5 w-1.5 rounded-full shadow-[0_0_6px_rgba(255,255,255,0.8)] bg-green-400 dark:bg-green/70 [will-change:transform,opacity]"
           style={{
             top: p.top,
             left: p.left,

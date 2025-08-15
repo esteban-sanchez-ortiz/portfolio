@@ -30,12 +30,16 @@ export const Speech = () => {
           HIGHLIGHTS.some(h => h.text === part) ? (
             <span
               key={i}
-              className="bg-neutral-800 text-white px-3 py-0 rounded-full inline-block my-1"
+              className="
+                px-3 py-0 rounded-full inline-block my-1
+                bg-neutral-200 text-neutral-900
+                dark:bg-neutral-800 dark:text-white
+              "
             >
               {part}
             </span>
           ) : (
-            <span className="text-white" key={i}>
+            <span key={i} className="text-neutral-900 dark:text-white">
               {part}
             </span>
           )

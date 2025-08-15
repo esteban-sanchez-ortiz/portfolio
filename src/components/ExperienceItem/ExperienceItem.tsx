@@ -19,7 +19,7 @@ export const ExperienceItem = ({
 }: ExperienceItemProps) => {
   const ref = useRef<HTMLLIElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 85%', 'end 15%'] })
-  const lift = useTransform(scrollYProgress, [0, 1], [0, -4 * INTENSITY]) // row lift
+  const lift = useTransform(scrollYProgress, [0, 1], [0, -4 * INTENSITY])
   const yAvatar = useTransform(scrollYProgress, [0, 1], [`${-6 * INTENSITY}%`, `${6 * INTENSITY}%`])
 
   return (
@@ -40,21 +40,21 @@ export const ExperienceItem = ({
       {/* Content */}
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline gap-2">
-          <h3 className="truncate text-base md:text-lg font-semibold text-zinc-100">
-            {role} · <span className="text-zinc-300">{company}</span>
+          <h3 className="truncate text-base md:text-lg font-semibold text-neutral-900 dark:text-zinc-100">
+            {role} · <span className="text-neutral-600 dark:text-zinc-300">{company}</span>
           </h3>
-          <span className="hidden sm:inline text-xs text-zinc-500">•</span>
-          <p className="hidden sm:inline text-xs text-zinc-400">
+          <span className="hidden sm:inline text-xs text-neutral-500 dark:text-zinc-500">•</span>
+          <p className="hidden sm:inline text-xs text-neutral-500 dark:text-zinc-400">
             {period} · {location}
           </p>
         </div>
 
-        <p className="mt-1.5 text-sm text-zinc-300">{summary}</p>
+        <p className="mt-1.5 text-sm text-neutral-700 dark:text-zinc-300">{summary}</p>
 
         {bullets?.length ? (
           <ul className="mt-2 space-y-1.5">
             {bullets.map((b, i) => (
-              <li key={i} className="text-sm text-zinc-400 leading-relaxed">
+              <li key={i} className="text-sm text-neutral-600 dark:text-zinc-400 leading-relaxed">
                 • {b}
               </li>
             ))}
@@ -66,7 +66,16 @@ export const ExperienceItem = ({
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-1.5 text-xs text-emerald-300 hover:bg-emerald-500/15 hover:border-emerald-500/50"
+            className="
+              inline-flex items-center gap-1.5 rounded-full border
+              border-emerald-600/30 dark:border-emerald-500/30
+              bg-emerald-600/10 dark:bg-emerald-500/10
+              px-3.5 py-1.5 text-xs
+              text-emerald-700 dark:text-emerald-300
+              hover:bg-emerald-600/15 dark:hover:bg-emerald-500/15
+              hover:border-emerald-600/50 dark:hover:border-emerald-500/50
+              transition-colors
+            "
           >
             Visit their site
             <svg width="14" height="14" viewBox="0 0 24 24" className="opacity-80">
