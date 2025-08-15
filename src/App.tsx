@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+
 import { useKonamiConfetti } from '@hooks'
 import {
   Banner,
@@ -12,7 +14,16 @@ import {
 } from '@sections'
 
 function App() {
+  useEffect(() => {
+    const title = 'Hi, curious dev 👋'
+    const subtitle = 'What are you doing on my console? Stay curious. 👀'
+    const s1 = 'font-weight:700;font-size:28px;line-height:1.2'
+    const s2 = 'font-size:12px;opacity:.8'
+    console.log('%c' + title, s1)
+    console.log('%c' + subtitle, s2)
+  }, [])
   useKonamiConfetti()
+
   return (
     <div className="dark:bg-black egg">
       <Background />
