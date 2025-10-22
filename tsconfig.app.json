@@ -25,7 +25,8 @@
       "@components": ["components"],
       "@hooks": ["hooks"],
       "@sections": ["sections"],
-      "@assets": ["assets"]
+      "@assets": ["assets"],
+      "@data": ["data"]
     }
   },
   "include": ["src"],

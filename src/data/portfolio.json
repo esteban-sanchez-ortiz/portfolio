@@ -1,0 +1,267 @@
+{
+  "personal": {
+    "name": "Esteban Sanchez",
+    "email": "esteban.sanchez.nt@gmail.com",
+    "location": "Medellín, Colombia",
+    "linkedin": "https://www.linkedin.com/in/hikso/",
+    "github": "https://github.com/esteban-sanchez-ortiz",
+    "availability": "Available for hire",
+    "heroImage": "yo.png",
+    "heroImageWebp": "me.webp"
+  },
+  "about": {
+    "intro": "I'm Esteban, a software developer focused on ",
+    "highlights": [
+      {
+        "text": "React & TypeScript",
+        "type": "pill"
+      },
+      {
+        "text": "high-performance UIs",
+        "type": "pill"
+      },
+      {
+        "text": "creative solutions",
+        "type": "pill"
+      }
+    ],
+    "closing": " that blend design and functionality."
+  },
+  "skills": [
+    {
+      "name": "React",
+      "icon": "React"
+    },
+    {
+      "name": "TypeScript",
+      "icon": "Typescript"
+    },
+    {
+      "name": "JavaScript",
+      "icon": "Javascript"
+    },
+    {
+      "name": "Tailwind CSS",
+      "icon": "Tailwindcss"
+    },
+    {
+      "name": "Node.js",
+      "icon": "Nodejs"
+    },
+    {
+      "name": "Playwright",
+      "icon": "Playwright"
+    },
+    {
+      "name": "Jest",
+      "icon": "Jest"
+    },
+    {
+      "name": "GraphQL",
+      "icon": "Graphql"
+    },
+    {
+      "name": "PostgreSQL",
+      "icon": "Postgresql"
+    },
+    {
+      "name": "Docker",
+      "icon": "Docker"
+    },
+    {
+      "name": "Git",
+      "icon": "Git"
+    },
+    {
+      "name": "GitHub Actions",
+      "icon": "GithubActions"
+    }
+  ],
+  "experience": [
+    {
+      "role": "Front‑End Software Analyst",
+      "company": "Bearing AI",
+      "period": "2022 – 2025",
+      "location": "Medellín",
+      "summary": "Modular UI architecture for a maritime analytics platform, E2E automation with Playwright, and React performance optimization.",
+      "bullets": [
+        "Cut manual bug‑hunting by ~30% via Playwright suites",
+        "Shipped React + TS + Tailwind components library"
+      ],
+      "image": "bearingai.svg",
+      "url": "https://bearing.ai"
+    },
+    {
+      "role": "Front‑End Software Analyst",
+      "company": "Perficient",
+      "period": "2021",
+      "location": "Medellín",
+      "summary": "Maintained and evolved a multi‑tenant education platform focusing on stability and performance.",
+      "bullets": [
+        "3k+ users, 1k+ active accounts",
+        "GraphQL + CI/CD improvements"
+      ],
+      "image": "perficient.svg",
+      "url": "https://www.perficient.com/"
+    },
+    {
+      "role": "Front‑End Developer",
+      "company": "Appinit",
+      "period": "2020 – 2021",
+      "location": "Medellín",
+      "summary": "Launched logistics and credit apps; led frontend and supported APIs for better performance.",
+      "bullets": [
+        "~25% performance uplift",
+        "Angular + JS + C# stack"
+      ],
+      "image": "appinit.svg",
+      "url": "https://appinit.co/"
+    },
+    {
+      "role": "Software Developer",
+      "company": "Solutto Consulting",
+      "period": "2019 – 2020",
+      "location": "Medellín",
+      "summary": "Built and deployed hybrid mobile apps for academic platforms, used by 1,000+ students and educators.",
+      "bullets": [
+        "Developed hybrid mobile apps with Ionic & JavaScript",
+        "Handled deployment to mobile platforms"
+      ],
+      "image": "solutto.webp",
+      "url": "https://soluttoconsulting.com"
+    }
+  ],
+  "projects": [
+    {
+      "title": "Grantly",
+      "blurb": "Data-permissions platform with points and real‑time notifications.",
+      "image": "liquid1.jpg",
+      "tech": [
+        {
+          "name": "React",
+          "icon": "React"
+        },
+        {
+          "name": "TypeScript",
+          "icon": "Typescript"
+        },
+        {
+          "name": "Node.js",
+          "icon": "Nodejs"
+        },
+        {
+          "name": "Tailwind CSS",
+          "icon": "Tailwindcss"
+        }
+      ],
+      "demoUrl": "https://autorizo-fe-production.up.railway.app/login",
+      "codeUrl": "https://github.com/autorizo/grantly"
+    },
+    {
+      "title": "My Portfolio",
+      "blurb": "Showcase of my work and projects.",
+      "image": "liquid2.jpg",
+      "tech": [
+        {
+          "name": "React",
+          "icon": "React"
+        },
+        {
+          "name": "TypeScript",
+          "icon": "Typescript"
+        },
+        {
+          "name": "Vite",
+          "icon": "Vite"
+        },
+        {
+          "name": "Tailwind CSS",
+          "icon": "Tailwindcss"
+        }
+      ],
+      "demoUrl": "https://esteban-sanchez-ortiz.github.io/portfolio",
+      "codeUrl": "https://github.com/esteban-sanchez-ortiz/portfolio"
+    },
+    {
+      "title": "Next case study",
+      "blurb": "Coming soon",
+      "tech": [],
+      "soon": true
+    }
+  ],
+  "education": [
+    {
+      "title": "Bachelor's Degree in Computer Science",
+      "institution": "Fundacion Universitaria Catolica del Norte",
+      "year": "2015 – 2020"
+    },
+    {
+      "title": "English Language – Level B2",
+      "institution": "-",
+      "year": "2021"
+    }
+  ],
+  "brands": {
+    "Bearing AI": {
+      "accent": "#10b981",
+      "bgType": "dark"
+    },
+    "Perficient": {
+      "accent": "#22c55e",
+      "mono": true
+    },
+    "Appinit": {
+      "accent": "#38bdf8",
+      "mono": true,
+      "bgType": "dark"
+    },
+    "Solutto Consulting": {
+      "accent": "#f97316",
+      "bgType": "light"
+    }
+  },
+  "background": {
+    "blobs": [
+      {
+        "id": "b1",
+        "className": "absolute top-1/2 left-1/2 h-72 w-72 rounded-full bg-gradient-to-tr from-sky-200 to-sky-400 blur-3xl opacity-40 -translate-x-[80%] -translate-y-[120%]",
+        "animate": {
+          "x": [0, 20, 0],
+          "y": [0, 15, 0]
+        },
+        "duration": 8
+      },
+      {
+        "id": "b2",
+        "className": "absolute top-1/2 left-1/2 h-64 w-64 rounded-full bg-gradient-to-tr from-emerald-200 to-emerald-400 blur-3xl opacity-40 translate-x-[70%] -translate-y-[80%]",
+        "animate": {
+          "x": [0, -20, 0],
+          "y": [0, -15, 0]
+        },
+        "duration": 10
+      },
+      {
+        "id": "b3",
+        "className": "absolute top-1/2 left-1/2 h-52 w-52 rounded-full bg-gradient-to-tr from-pink-200 to-pink-400 blur-3xl opacity-45 -translate-x-[90%] translate-y-[60%]",
+        "animate": {
+          "x": [0, 15, 0],
+          "y": [0, -10, 0]
+        },
+        "duration": 9
+      },
+      {
+        "id": "b4",
+        "className": "absolute top-1/2 left-1/2 h-56 w-56 rounded-full bg-gradient-to-tr from-amber-200 to-rose-300 blur-3xl opacity-35 translate-x-[65%] translate-y-[70%]",
+        "animate": {
+          "x": [0, -15, 0],
+          "y": [0, 12, 0]
+        },
+        "duration": 11
+      }
+    ],
+    "sparkles": {
+      "count": 28,
+      "seed": 77
+    }
+  }
+}

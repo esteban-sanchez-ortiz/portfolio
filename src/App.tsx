@@ -33,7 +33,7 @@ function App() {
           line1="Hi, I'm Esteban — Software Developer"
           line2="crafting high-performance, accessible UIs with React & TypeScript."
           highlight="React & TypeScript"
-          imgSrc="yo.png"
+          imgSrc="me.webp"
           imgAlt="Esteban portrait"
         />
         <WorkExperience />

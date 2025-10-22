@@ -43,6 +43,7 @@ export default defineConfig({
       '@sections': path.resolve(__dirname, 'src/sections'),
       '@hooks': path.resolve(__dirname, 'src/hooks'),
       '@assets': path.resolve(__dirname, 'src/assets'),
+      '@data': path.resolve(__dirname, 'src/data'),
     },
   },
   build: { target: 'es2020', cssCodeSplit: true, sourcemap: true },

@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-
 import { Chip, Dot } from './components'
-
 import { SocialLink, Icons, Avatar } from '@components'
 import { useZonedClock } from '@hooks'
+import { personalData } from '@data'
 
 export const Banner = () => {
   const time = useZonedClock()
@@ -45,7 +44,7 @@ export const Banner = () => {
                 </>
               }
             >
-              <span className="font-medium">Available for hire</span>
+              <span className="font-medium">{personalData.availability}</span>
             </Chip>
 
             <Chip icon={<Icons.Clock className="h-5 w-5" />}>
@@ -53,19 +52,19 @@ export const Banner = () => {
             </Chip>
 
             <Chip icon={<Icons.Pin className="h-5 w-5" />}>
-              <span>Medellín, Colombia</span>
+              <span>{personalData.location}</span>
             </Chip>
           </div>
 
           <div className="md:hidden flex items-center gap-2 text-sm whitespace-nowrap">
             <Chip icon={<Icons.Pin className="h-5 w-5" />}>
-              <span>Medellín, Colombia</span>
+              <span>{personalData.location}</span>
             </Chip>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <SocialLink href="https://www.linkedin.com/in/hikso/" label="LinkedIn">
+          <SocialLink href={personalData.linkedin} label="LinkedIn">
             <Icons.LinkedIn className="h-10 w-10 transition-transform duration-200 hover:scale-[1.03] active:scale-[0.98]" />
           </SocialLink>
         </div>

@@ -1,21 +1,18 @@
+import { memo, useMemo } from 'react'
 import { motion } from 'framer-motion'
+import { aboutData } from '@data'
 
-const HIGHLIGHTS = [
-  { text: 'React & TypeScript', type: 'pill' },
-  { text: 'high-performance UIs', type: 'pill' },
-  { text: 'creative solutions', type: 'pill' },
-]
-
-export const Speech = () => {
-  const content = [
-    'I’m Esteban, a software developer focused on ',
-    'React & TypeScript',
-    ', crafting ',
-    'high-performance UIs',
-    ' and building ',
-    'creative solutions',
-    ' that blend design and functionality.',
-  ]
+export const Speech = memo(() => {
+  const content = useMemo(() => {
+    const parts = [aboutData.intro]
+    aboutData.highlights.forEach((highlight, idx) => {
+      parts.push(highlight.text)
+      if (idx === 0) parts.push(', crafting ')
+      else if (idx === 1) parts.push(' and building ')
+    })
+    parts.push(aboutData.closing)
+    return parts
+  }, [])
 
   return (
     <section className="max-w-4xl mx-auto px-6 py-10 text-3xl leading-loose">
@@ -27,7 +24,7 @@ export const Speech = () => {
         className="text-center"
       >
         {content.map((part, i) =>
-          HIGHLIGHTS.some(h => h.text === part) ? (
+          aboutData.highlights.some(h => h.text === part) ? (
             <span
               key={i}
               className="
@@ -47,4 +44,4 @@ export const Speech = () => {
       </motion.div>
     </section>
   )
-}
+})

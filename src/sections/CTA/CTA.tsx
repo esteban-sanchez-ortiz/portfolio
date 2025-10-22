@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion'
-
 import { Icons } from '@components'
+import { personalData } from '@data'
 
 export const CTA = () => {
   return (
     <motion.a
-      href="mailto:esteban.sanchez.nt@gmail.com"
+      href={`mailto:${personalData.email}`}
       initial={{ scale: 0 }}
       whileInView={{ scale: 1 }}
       transition={{ duration: 0.4 }}

@@ -1,24 +1,13 @@
+import { memo } from 'react'
 import { motion } from 'framer-motion'
+import { educationData } from '@data'
 
-const EDUCATION = [
-  {
-    title: 'Bachelor’s Degree in Computer Science',
-    institution: 'Fundacion Universitaria Catolica del Norte',
-    year: '2015 – 2020',
-  },
-  {
-    title: 'English Language – Level B2',
-    institution: '-',
-    year: '2021',
-  },
-]
-
-export const Education = () => {
+export const Education = memo(() => {
   return (
     <section className="max-w-4xl mx-auto px-6 py-10">
       <h2 className="text-2xl font-bold mb-6 text-neutral-900 dark:text-white">Education</h2>
       <div className="space-y-4">
-        {EDUCATION.map((edu, i) => (
+        {educationData.map((edu, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, x: -20 }}
@@ -41,4 +30,4 @@ export const Education = () => {
       </div>
     </section>
   )
-}
+})
