@@ -1,0 +1,33 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "sancho-chat",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-07-28",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  // Bundle the prompt + knowledge markdown as text modules
+  "rules": [{ "type": "Text", "globs": ["**/*.md"], "fallthrough": true }],
+  // Per-IP rate limit: 12 requests / 60s
+  "unsafe": {
+    "bindings": [
+      {
+        "name": "RATE_LIMITER",
+        "type": "ratelimit",
+        "namespace_id": "1001",
+        "simple": { "limit": 12, "period": 60 }
+      }
+    ]
+  },
+  // Daily usage counter (global budget cap). Create with: wrangler kv namespace create USAGE
+  "kv_namespaces": [{ "binding": "USAGE", "id": "REPLACE_WITH_KV_NAMESPACE_ID" }],
+  "vars": {
+    "ALLOWED_ORIGINS": "https://esteban-sanchez-ortiz.github.io,http://localhost:5173",
+    "GROQ_MODEL": "llama-3.3-70b-versatile",
+    "GUARD_MODEL": "meta-llama/llama-prompt-guard-2-86m",
+    "DAILY_MESSAGE_CAP": "1500"
+  }
+  // Secrets (wrangler secret put): GROQ_API_KEY, CANARY
+}
