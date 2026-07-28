@@ -13,7 +13,7 @@
 - **Languages:** Spanish (native), English (professional working proficiency — daily communication, technical documentation, client meetings; comfortable interviewing in English)
 - **Email:** esteban.sanchez.nt@gmail.com
 - **GitHub:** https://github.com/esteban-sanchez-ortiz
-- **LinkedIn:** https://www.linkedin.com/in/hikso/
+- **LinkedIn:** https://www.linkedin.com/in/esteban-sanchez-ortiz/
 - **Portfolio:** https://esteban-sanchez-ortiz.github.io/portfolio/
 
 ## Current situation

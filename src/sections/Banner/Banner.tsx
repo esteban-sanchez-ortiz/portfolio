@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 
 import { Chip, Dot } from './components'
 
-import { SocialLink, Icons, Avatar } from '@components'
+import { SocialLink, Icons, Avatar, NavMenu } from '@components'
 import { useZonedClock } from '@hooks'
 
 export const Banner = () => {
@@ -35,7 +35,7 @@ export const Banner = () => {
         <div className="flex items-center gap-4 min-w-0">
           <Avatar />
           {/* Desktop chips */}
-          <div className="hidden md:flex items-center gap-6 text-sm whitespace-nowrap">
+          <div className="hidden lg:flex items-center gap-6 text-sm whitespace-nowrap">
             <Chip
               icon={
                 <>
@@ -57,14 +57,15 @@ export const Banner = () => {
             </Chip>
           </div>
 
-          <div className="md:hidden flex items-center gap-2 text-sm whitespace-nowrap">
+          <div className="lg:hidden flex items-center gap-2 text-sm whitespace-nowrap">
             <Chip icon={<Icons.Pin className="h-5 w-5" />}>
               <span>Medellín, Colombia</span>
             </Chip>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
+          <NavMenu />
           <SocialLink href="https://www.linkedin.com/in/hikso/" label="LinkedIn">
             <Icons.LinkedIn className="h-10 w-10 transition-transform duration-200 hover:scale-[1.03] active:scale-[0.98]" />
           </SocialLink>

@@ -3,7 +3,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 
 import type { HeroProps } from './Hero.types'
 
-import { TechStrip } from '@components'
+import { SanchoChat, TechStrip } from '@components'
 
 export const Hero = memo(function Hero({
   line1,
@@ -21,11 +21,11 @@ export const Hero = memo(function Hero({
   }, [line2, highlight])
 
   return (
-    <section className="relative h-90vh md:h-screen overflow-hidden flex flex-col items-center justify-center px-4 sm:px-6">
+    <section className="relative min-h-[90vh] md:min-h-screen flex flex-col items-center justify-center px-4 py-16 sm:px-6">
       <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-zinc-200/80 dark:bg-white/10" />
 
-      <div className="mx-auto grid grid-cols-1 place-items-center px-4 sm:px-6">
-        <div className="relative mt-10 lg:mt-0 z-10">
+      <div className="mx-auto grid w-full grid-cols-1 place-items-center px-4 sm:px-6">
+        <div className="relative mt-6 lg:mt-0 z-10">
           <motion.img
             src={imgSrc}
             alt={imgAlt}
@@ -36,7 +36,7 @@ export const Hero = memo(function Hero({
             viewport={reduceMotion ? undefined : { once: true, amount: 0.5 }}
             transition={reduceMotion ? undefined : { duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="
-              relative mx-auto block h-full w-full max-w-[200px]
+              relative mx-auto block h-full w-full max-w-[140px]
               rounded-b-full transform-gpu
               [mask-image:linear-gradient(to_bottom,black_78%,transparent_100%)]
               shadow-[0_20px_80px_-30px_rgba(0,0,0,0.45)]
@@ -56,7 +56,7 @@ export const Hero = memo(function Hero({
             viewport={reduceMotion ? undefined : { once: true, amount: 0.6 }}
             transition={reduceMotion ? undefined : { duration: 0.45 }}
             className="text-center font-extrabold leading-[0.95] text-zinc-900 dark:text-zinc-100
-                       text-[clamp(2.4rem,7vw,4.6rem)]"
+                       text-[clamp(1.7rem,4.5vw,3rem)]"
           >
             {line1}
             <br />
@@ -71,6 +71,7 @@ export const Hero = memo(function Hero({
             )}
           </motion.h1>
         </div>
+        <SanchoChat />
         <TechStrip />
       </div>
     </section>
