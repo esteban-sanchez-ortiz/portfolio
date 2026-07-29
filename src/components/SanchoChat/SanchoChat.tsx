@@ -110,7 +110,11 @@ export const SanchoChat = memo(function SanchoChat({ intro }: SanchoChatProps) {
       </AnimatePresence>
 
       {/* Center: the only scrollable area */}
-      <div ref={scrollRef} className="sancho-scroll relative min-h-0 flex-1 overflow-y-auto">
+      <motion.div
+        layout={!reduceMotion}
+        ref={scrollRef}
+        className="sancho-scroll relative min-h-0 flex-1 overflow-y-auto"
+      >
         <AnimatePresence initial={false}>
           {!started && (
             <motion.div
@@ -212,10 +216,11 @@ export const SanchoChat = memo(function SanchoChat({ intro }: SanchoChatProps) {
             )}
           </div>
         )}
-      </div>
+      </motion.div>
 
-      {/* Bottom dock: chips + input, always visible */}
-      <div className="relative shrink-0 px-4 pb-5 pt-2 sm:px-6">
+      {/* Bottom dock: chips + input. Starts at the vertical center (spacer
+          below), slides to the bottom when the conversation begins. */}
+      <motion.div layout={!reduceMotion} className="relative shrink-0 px-4 pb-5 pt-2 sm:px-6">
         <AnimatePresence initial={false}>
           {!started && (
             <motion.div
@@ -279,7 +284,23 @@ export const SanchoChat = memo(function SanchoChat({ intro }: SanchoChatProps) {
             {t.send}
           </button>
         </form>
-      </div>
+      </motion.div>
+
+      {/* Collapsing spacer: keeps the dock vertically centered until the
+          first message, then shrinks so the dock lands at the bottom. */}
+      <AnimatePresence initial={false}>
+        {!started && (
+          <motion.div
+            key="dock-spacer"
+            aria-hidden
+            layout={!reduceMotion}
+            style={{ flexGrow: 0.85 }}
+            exit={reduceMotion ? { flexGrow: 0 } : { flexGrow: 0 }}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            className="shrink-0"
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 })
