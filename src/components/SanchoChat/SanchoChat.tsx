@@ -24,7 +24,11 @@ const COPY = {
   },
 } as const
 
-export const SanchoChat = memo(function SanchoChat() {
+interface SanchoChatProps {
+  onStartedChange?: (started: boolean) => void
+}
+
+export const SanchoChat = memo(function SanchoChat({ onStartedChange }: SanchoChatProps) {
   const { messages, status, error, send } = useSanchoChat()
   const [input, setInput] = useState('')
   const reduceMotion = useReducedMotion()
@@ -45,6 +49,10 @@ export const SanchoChat = memo(function SanchoChat() {
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight })
   }, [messages])
+
+  useEffect(() => {
+    onStartedChange?.(started)
+  }, [started, onStartedChange])
 
   const submit = (text: string) => {
     if (!text.trim() || streaming) return
@@ -88,7 +96,7 @@ export const SanchoChat = memo(function SanchoChat() {
               <div
                 ref={scrollRef}
                 aria-live="polite"
-                className="max-h-[38vh] space-y-4 overflow-y-auto scroll-smooth p-4 sm:p-5"
+                className="max-h-[46vh] space-y-4 overflow-y-auto scroll-smooth p-4 sm:p-5 md:max-h-[52vh]"
               >
                 {messages.map((m, i) =>
                   m.role === 'user' ? (
