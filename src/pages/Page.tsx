@@ -10,7 +10,7 @@ interface PageProps {
 /** Shared shell for content pages: document title, scroll reset, footer. */
 export const Page = ({ title, children }: PageProps) => {
   useEffect(() => {
-    document.title = `${title} — Esteban Sánchez`
+    document.title = `${title} · Esteban Sánchez`
     window.scrollTo(0, 0)
   }, [title])
 

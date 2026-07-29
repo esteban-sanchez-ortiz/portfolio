@@ -9,7 +9,7 @@ import { useSanchoChat } from '@hooks'
 
 const COPY = {
   es: {
-    eyebrow: 'SANCHO — escudero digital de Esteban',
+    eyebrow: 'SANCHO · escudero digital de Esteban',
     greeting: '¡Hola! Soy Sancho, el escudero digital de Esteban. Pregúntame lo que quieras 👇',
     placeholder: 'Pregúntale a Sancho sobre Esteban…',
     send: 'Enviar',
@@ -19,7 +19,7 @@ const COPY = {
     schedule: 'Quiero agendar una entrevista con Esteban',
   },
   en: {
-    eyebrow: "SANCHO — Esteban's digital squire",
+    eyebrow: "SANCHO · Esteban's digital squire",
     greeting: "Hi! I'm Sancho, Esteban's digital squire. Ask me anything 👇",
     placeholder: 'Ask Sancho about Esteban…',
     send: 'Send',

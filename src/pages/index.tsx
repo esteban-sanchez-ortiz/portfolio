@@ -6,13 +6,13 @@ import { Hero, WorkExperience, Projects, Speech, Education, CTA } from '@section
 
 export const HomePage = () => {
   useEffect(() => {
-    document.title = 'Esteban Sánchez — Ask Sancho'
+    document.title = 'Esteban Sánchez · Ask Sancho'
   }, [])
 
   return (
     <main>
       <Hero
-        line1="Hi, I'm Esteban — Software Developer"
+        line1="Hi, I'm Esteban, Software Developer"
         line2="crafting high-performance, accessible UIs with React & TypeScript."
         highlight="React & TypeScript"
         imgSrc={`${import.meta.env.BASE_URL}yo.png`}
