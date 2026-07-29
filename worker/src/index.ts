@@ -1,5 +1,5 @@
 import { validateMessages, detectInjection } from './guard';
-import { buildSystemPrompt } from './prompt';
+import { buildSystemPrompt, detectLang } from './prompt';
 import { streamChat } from './chat';
 import { validateLead, saveLead } from './leads';
 
@@ -27,13 +27,6 @@ function withCors(response: Response, origin: string): Response {
   const headers = new Headers(response.headers);
   for (const [k, v] of Object.entries(corsHeaders(origin))) headers.set(k, v as string);
   return new Response(response.body, { status: response.status, headers });
-}
-
-/** Rough "looks Spanish" check so canned refusals match the visitor's language. */
-function looksSpanish(text: string): boolean {
-  return /[áéíóúñ¿¡]|\b(que|como|cuanto|donde|hola|salario|sueldo|por|para|trabajo)\b/i.test(
-    text.toLowerCase(),
-  );
 }
 
 async function underDailyCap(env: Env, ctx: ExecutionContext): Promise<boolean> {
@@ -85,17 +78,21 @@ export default {
         return withCors(Response.json({ error: 'daily_cap' }, { status: 429 }), origin);
       }
 
-      const validation = validateMessages(await request.json().catch(() => null));
+      const body = await request.json().catch(() => null);
+      const validation = validateMessages(body);
       if (!validation.ok) {
         return withCors(Response.json({ error: validation.error }, { status: 400 }), origin);
       }
       const { messages } = validation;
 
+      const hint = (body as { lang?: unknown } | null)?.lang === 'en' ? 'en' : 'es';
+      const lastUser = messages[messages.length - 1]?.content ?? '';
+      const lang = detectLang(lastUser, hint);
+
       const injected = await detectInjection(env.GROQ_API_KEY, env.GUARD_MODEL, messages);
       if (injected) {
         console.log(JSON.stringify({ event: 'guard_block', ip }));
-        const lastUser = messages[messages.length - 1]?.content ?? '';
-        const reply = looksSpanish(lastUser) ? BLOCKED_REPLY_ES : BLOCKED_REPLY_EN;
+        const reply = lang === 'es' ? BLOCKED_REPLY_ES : BLOCKED_REPLY_EN;
         // Canned in-character refusal — the malicious text never reaches the main model.
         return withCors(
           new Response(
@@ -106,7 +103,7 @@ export default {
         );
       }
 
-      const systemPrompt = buildSystemPrompt(env.CANARY);
+      const systemPrompt = buildSystemPrompt(env.CANARY, lang);
       const response = await streamChat(
         env.GROQ_API_KEY,
         env.GROQ_MODEL,

@@ -58,7 +58,10 @@ export function useSanchoChat() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             signal: controller.signal,
-            body: JSON.stringify({ messages: history.slice(-MAX_HISTORY) }),
+            body: JSON.stringify({
+              messages: history.slice(-MAX_HISTORY),
+              lang: navigator.language.toLowerCase().startsWith('es') ? 'es' : 'en',
+            }),
           })
 
           if (!res.ok || !res.body) {
