@@ -24,24 +24,35 @@ function sse(data: unknown): string {
 export async function streamChat(
   apiKey: string,
   model: string,
+  fallbackModel: string | undefined,
   systemPrompt: string,
   messages: ChatMessage[],
   canary: string,
 ): Promise<Response> {
-  const upstream = await fetch(GROQ_URL, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model,
-      stream: true,
-      max_tokens: MAX_OUTPUT_TOKENS,
-      temperature: 0.6,
-      messages: [{ role: 'system', content: systemPrompt }, ...messages],
-    }),
-  });
+  const callGroq = (m: string) =>
+    fetch(GROQ_URL, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: m,
+        stream: true,
+        max_tokens: MAX_OUTPUT_TOKENS,
+        temperature: 0.6,
+        messages: [{ role: 'system', content: systemPrompt }, ...messages],
+      }),
+    });
+
+  let upstream = await callGroq(model);
+
+  // Graceful degradation: when the main model is rate-limited (e.g. free-tier
+  // daily token cap), fall back to the smaller model instead of failing.
+  if (!upstream.ok && upstream.status === 429 && fallbackModel) {
+    console.log(JSON.stringify({ event: 'groq_fallback', from: model, to: fallbackModel }));
+    upstream = await callGroq(fallbackModel);
+  }
 
   if (!upstream.ok || !upstream.body) {
     console.log(JSON.stringify({ event: 'groq_error', status: upstream.status }));

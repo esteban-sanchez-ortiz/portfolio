@@ -110,6 +110,7 @@ export default {
       const response = await streamChat(
         env.GROQ_API_KEY,
         env.GROQ_MODEL,
+        env.GROQ_FALLBACK_MODEL,
         systemPrompt,
         messages,
         env.CANARY,

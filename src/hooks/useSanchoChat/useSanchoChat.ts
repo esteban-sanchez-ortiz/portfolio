@@ -14,6 +14,10 @@ const API_URL =
 
 const MAX_HISTORY = 12
 const MAX_CHARS = 2000
+const MAX_ATTEMPTS = 2
+const RETRY_DELAY_MS = 4000
+
+type AttemptResult = 'done' | 'retryable' | 'rate_limited' | 'fatal'
 
 export function useSanchoChat() {
   const [messages, setMessages] = useState<SanchoMessage[]>([])
@@ -44,59 +48,77 @@ export function useSanchoChat() {
           return next
         })
 
+      const controller = new AbortController()
+      abortRef.current = controller
+
+      const attempt = async (): Promise<AttemptResult> => {
+        let gotDelta = false
+        try {
+          const res = await fetch(`${API_URL}/api/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            signal: controller.signal,
+            body: JSON.stringify({ messages: history.slice(-MAX_HISTORY) }),
+          })
+
+          if (!res.ok || !res.body) {
+            if (res.status === 429) return 'rate_limited'
+            return res.status === 502 ? 'retryable' : 'fatal'
+          }
+
+          const reader = res.body.getReader()
+          const decoder = new TextDecoder()
+          let buffer = ''
+          for (;;) {
+            const { done, value } = await reader.read()
+            if (done) break
+            buffer += decoder.decode(value, { stream: true })
+            const lines = buffer.split('\n')
+            buffer = lines.pop() ?? ''
+            for (const line of lines) {
+              const trimmed = line.trim()
+              if (!trimmed.startsWith('data:')) continue
+              const payload = trimmed.slice(5).trim()
+              if (payload === '[DONE]') continue
+              try {
+                const parsed = JSON.parse(payload) as { delta?: string; error?: string }
+                if (parsed.delta) {
+                  gotDelta = true
+                  appendDelta(parsed.delta)
+                }
+                if (parsed.error) return gotDelta ? 'fatal' : 'retryable'
+              } catch {
+                // ignore malformed SSE fragments
+              }
+            }
+          }
+          return 'done'
+        } catch (err) {
+          if ((err as Error).name === 'AbortError') return 'done'
+          return gotDelta ? 'fatal' : 'retryable'
+        }
+      }
+
       const fail = (kind: Exclude<SanchoError, null>) => {
-        setMessages(prev =>
-          prev[prev.length - 1]?.content === '' ? prev.slice(0, -1) : prev,
-        )
+        setMessages(prev => (prev[prev.length - 1]?.content === '' ? prev.slice(0, -1) : prev))
         setError(kind)
         setStatus('error')
       }
 
-      const controller = new AbortController()
-      abortRef.current = controller
-
-      try {
-        const res = await fetch(`${API_URL}/api/chat`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          signal: controller.signal,
-          body: JSON.stringify({ messages: history.slice(-MAX_HISTORY) }),
-        })
-
-        if (!res.ok || !res.body) {
-          fail(res.status === 429 ? 'rate_limited' : 'unavailable')
+      for (let i = 1; i <= MAX_ATTEMPTS; i++) {
+        const result = await attempt()
+        if (result === 'done') {
+          setStatus('idle')
           return
         }
-
-        const reader = res.body.getReader()
-        const decoder = new TextDecoder()
-        let buffer = ''
-        for (;;) {
-          const { done, value } = await reader.read()
-          if (done) break
-          buffer += decoder.decode(value, { stream: true })
-          const lines = buffer.split('\n')
-          buffer = lines.pop() ?? ''
-          for (const line of lines) {
-            const trimmed = line.trim()
-            if (!trimmed.startsWith('data:')) continue
-            const payload = trimmed.slice(5).trim()
-            if (payload === '[DONE]') continue
-            try {
-              const parsed = JSON.parse(payload) as { delta?: string; error?: string }
-              if (parsed.delta) appendDelta(parsed.delta)
-              if (parsed.error) {
-                fail('unavailable')
-                return
-              }
-            } catch {
-              // ignore malformed SSE fragments
-            }
-          }
+        const retryable = result === 'retryable' || result === 'rate_limited'
+        if (i < MAX_ATTEMPTS && retryable) {
+          // Quiet backoff: the thinking indicator keeps pulsing meanwhile.
+          await new Promise(r => setTimeout(r, RETRY_DELAY_MS))
+          continue
         }
-        setStatus('idle')
-      } catch (err) {
-        if ((err as Error).name !== 'AbortError') fail('unavailable')
+        fail(result === 'rate_limited' ? 'rate_limited' : 'unavailable')
+        return
       }
     },
     [messages, status],
