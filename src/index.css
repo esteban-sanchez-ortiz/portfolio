@@ -28,6 +28,39 @@
   }
 }
 
+/* Two-frame pixel wave for the Sancho mascot (steps keep it crisp) */
+@keyframes sancho-frame-a {
+  0%,
+  49.9% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes sancho-frame-b {
+  0%,
+  49.9% {
+    opacity: 0;
+  }
+  50%,
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Soft teal glow inviting the first message */
+@keyframes sancho-cta-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 178, 169, 0);
+  }
+  50% {
+    box-shadow: 0 0 22px 2px rgba(0, 178, 169, 0.28);
+  }
+}
+
 /* Slim, quiet scrollbar for the Sancho chat thread */
 .sancho-scroll {
   scrollbar-width: thin;

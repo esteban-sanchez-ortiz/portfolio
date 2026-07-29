@@ -10,6 +10,7 @@ import { useSanchoChat } from '@hooks'
 const COPY = {
   es: {
     eyebrow: 'SANCHO — escudero digital de Esteban',
+    greeting: '¡Hola! Soy Sancho, el escudero digital de Esteban. Pregúntame lo que quieras 👇',
     placeholder: 'Pregúntale a Sancho sobre Esteban…',
     send: 'Enviar',
     chips: ['¿Qué stack domina?', '¿Ha liderado equipos?', '¿Está abierto a ofertas?'],
@@ -19,6 +20,7 @@ const COPY = {
   },
   en: {
     eyebrow: "SANCHO — Esteban's digital squire",
+    greeting: "Hi! I'm Sancho, Esteban's digital squire. Ask me anything 👇",
     placeholder: 'Ask Sancho about Esteban…',
     send: 'Send',
     chips: ['What stack does he master?', 'Has he led teams?', 'Is he open to offers?'],
@@ -78,9 +80,24 @@ export const SanchoChat = memo(function SanchoChat({ intro }: SanchoChatProps) {
   }
 
   return (
-    <div className="flex h-full w-full flex-col">
+    <div className="relative flex h-full w-full flex-col">
+      {/* Legibility scrim: mutes the background blobs while chatting */}
+      <AnimatePresence initial={false}>
+        {started && (
+          <motion.div
+            key="scrim"
+            aria-hidden
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6 }}
+            className="pointer-events-none absolute inset-0 bg-white/75 backdrop-blur-sm dark:bg-black/60"
+          />
+        )}
+      </AnimatePresence>
+
       {/* Center: the only scrollable area */}
-      <div ref={scrollRef} className="sancho-scroll min-h-0 flex-1 overflow-y-auto">
+      <div ref={scrollRef} className="sancho-scroll relative min-h-0 flex-1 overflow-y-auto">
         <AnimatePresence initial={false}>
           {!started && (
             <motion.div
@@ -90,15 +107,16 @@ export const SanchoChat = memo(function SanchoChat({ intro }: SanchoChatProps) {
               className="flex min-h-full flex-col items-center justify-center px-4"
             >
               {intro}
-              <div className="mt-6 flex items-center gap-2">
-                <SanchoMascot size={22} />
-                <p className="font-mono text-[11px] tracking-widest text-zinc-500 dark:text-zinc-400">
-                  {t.eyebrow}
-                </p>
-                <span
-                  aria-hidden
-                  className="h-1.5 w-1.5 rounded-full bg-roulette-teal [animation:dotpulse_1.6s_ease-in-out_infinite]"
-                />
+              <div className="mt-6 flex flex-col items-center gap-3">
+                <SanchoMascot size={72} wave={!reduceMotion} />
+                <div
+                  className="max-w-xs rounded-xl border border-zinc-200 bg-white/80 px-4 py-2 text-center
+                             backdrop-blur dark:border-white/10 dark:bg-white/[0.06] sm:max-w-none"
+                >
+                  <p className="font-mono text-xs text-zinc-700 dark:text-zinc-200 sm:text-sm">
+                    {t.greeting}
+                  </p>
+                </div>
               </div>
             </motion.div>
           )}
@@ -184,7 +202,7 @@ export const SanchoChat = memo(function SanchoChat({ intro }: SanchoChatProps) {
       </div>
 
       {/* Bottom dock: chips + input, always visible */}
-      <div className="shrink-0 px-4 pb-5 pt-2 sm:px-6">
+      <div className="relative shrink-0 px-4 pb-5 pt-2 sm:px-6">
         <AnimatePresence initial={false}>
           {!started && (
             <motion.div
@@ -216,9 +234,12 @@ export const SanchoChat = memo(function SanchoChat({ intro }: SanchoChatProps) {
             e.preventDefault()
             submit(input)
           }}
-          className="mx-auto flex w-full max-w-2xl items-center gap-2 rounded-2xl border
-                     border-zinc-200 bg-white/70 p-2 pl-4 backdrop-blur
-                     dark:border-white/10 dark:bg-white/[0.03]"
+          className={`mx-auto flex w-full max-w-2xl items-center gap-2 rounded-2xl border
+                     bg-white/70 p-2 pl-4 backdrop-blur dark:bg-white/[0.03] ${
+                       started
+                         ? 'border-zinc-200 dark:border-white/10'
+                         : 'border-roulette-teal/40 [animation:sancho-cta-glow_2.4s_ease-in-out_infinite] motion-reduce:animate-none'
+                     }`}
         >
           <span aria-hidden className="select-none font-mono text-base text-roulette-teal">
             ❯

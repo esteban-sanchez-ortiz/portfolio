@@ -29,6 +29,22 @@ const ROWS = [
   '................',
 ]
 
+// Waving right arm, two frames (hand up / hand mid) toggled by CSS steps.
+const ARM_UP = [
+  { x: 14, y: 8, c: 'C' },
+  { x: 15, y: 7, c: 'S' },
+  { x: 15, y: 6, c: 'S' },
+  { x: 15, y: 5, c: 's' },
+]
+const ARM_MID = [
+  { x: 14, y: 9, c: 'C' },
+  { x: 15, y: 9, c: 'S' },
+  { x: 15, y: 8, c: 'S' },
+]
+
+const toPixels = (cells: Array<{ x: number; y: number; c: string }>) =>
+  cells.map(({ x, y, c }) => ({ x, y, fill: PALETTE[c] ?? '#000' }))
+
 const PIXELS = ROWS.flatMap((row, y) =>
   [...row].flatMap((ch, x) => (ch === '.' ? [] : [{ x, y, fill: PALETTE[ch] ?? '#000' }])),
 )
@@ -36,9 +52,11 @@ const PIXELS = ROWS.flatMap((row, y) =>
 interface SanchoMascotProps {
   size?: number
   className?: string
+  /** Animate a two-frame pixel wave with the right arm. */
+  wave?: boolean
 }
 
-export const SanchoMascot = ({ size = 24, className }: SanchoMascotProps) => (
+export const SanchoMascot = ({ size = 24, className, wave = false }: SanchoMascotProps) => (
   <svg
     width={size}
     height={size}
@@ -50,5 +68,19 @@ export const SanchoMascot = ({ size = 24, className }: SanchoMascotProps) => (
     {PIXELS.map(({ x, y, fill }, i) => (
       <rect key={i} x={x} y={y} width={1} height={1} fill={fill} />
     ))}
+    {wave && (
+      <>
+        <g style={{ animation: 'sancho-frame-a 0.9s steps(1) infinite' }}>
+          {toPixels(ARM_UP).map(({ x, y, fill }, i) => (
+            <rect key={i} x={x} y={y} width={1} height={1} fill={fill} />
+          ))}
+        </g>
+        <g style={{ animation: 'sancho-frame-b 0.9s steps(1) infinite' }}>
+          {toPixels(ARM_MID).map(({ x, y, fill }, i) => (
+            <rect key={i} x={x} y={y} width={1} height={1} fill={fill} />
+          ))}
+        </g>
+      </>
+    )}
   </svg>
 )
