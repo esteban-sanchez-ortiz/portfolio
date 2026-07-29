@@ -62,6 +62,19 @@ export const SanchoChat = memo(function SanchoChat({ intro }: SanchoChatProps) {
   const es = useMemo(() => navigator.language.toLowerCase().startsWith('es'), [])
   const t = es ? COPY.es : COPY.en
 
+  // Parse every assistant message once, deduplicating cards across the whole
+  // conversation: each card kind renders only the first time it appears.
+  const parsed = useMemo(() => {
+    const seen = new Set<CardKind>()
+    return messages.map(m => {
+      if (m.role !== 'assistant') return null
+      const { text, cards } = parseAssistant(m.content)
+      const fresh = cards.filter(k => !seen.has(k))
+      fresh.forEach(k => seen.add(k))
+      return { text, cards: fresh }
+    })
+  }, [messages])
+
   const started = messages.length > 0
   const streaming = status === 'streaming'
   const lastAssistant = messages[messages.length - 1]
@@ -139,7 +152,7 @@ export const SanchoChat = memo(function SanchoChat({ intro }: SanchoChatProps) {
                   </motion.p>
                 )
               }
-              const { text, cards } = parseAssistant(m.content)
+              const { text, cards } = parsed[i] ?? { text: '', cards: [] }
               const isLast = i === messages.length - 1
               if (!text && !cards.length) return null
               return (
