@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 
 import { SanchoCard } from './SanchoCard'
@@ -42,10 +42,15 @@ function parseAssistant(content: string): { text: string; cards: CardKind[] } {
 }
 
 interface SanchoChatProps {
-  onStartedChange?: (started: boolean) => void
+  /** Hero content (portrait, headline, tech strip) shown until the chat starts. */
+  intro?: ReactNode
 }
 
-export const SanchoChat = memo(function SanchoChat({ onStartedChange }: SanchoChatProps) {
+/**
+ * Full-height chat layout: free-flowing thread in the middle (only element
+ * that scrolls), input docked at the bottom, intro centered until first message.
+ */
+export const SanchoChat = memo(function SanchoChat({ intro }: SanchoChatProps) {
   const { messages, status, error, send } = useSanchoChat()
   const [input, setInput] = useState('')
   const reduceMotion = useReducedMotion()
@@ -65,10 +70,6 @@ export const SanchoChat = memo(function SanchoChat({ onStartedChange }: SanchoCh
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight })
   }, [messages])
 
-  useEffect(() => {
-    onStartedChange?.(started)
-  }, [started, onStartedChange])
-
   const submit = (text: string) => {
     if (!text.trim() || streaming) return
     void send(text)
@@ -77,126 +78,135 @@ export const SanchoChat = memo(function SanchoChat({ onStartedChange }: SanchoCh
   }
 
   return (
-    <motion.div
-      layout={!reduceMotion}
-      initial={reduceMotion ? false : { opacity: 0, y: 12 }}
-      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="z-10 mt-8 w-full max-w-2xl"
-    >
-      <AnimatePresence initial={false}>
-        {!started && (
-          <motion.div
-            key="eyebrow"
-            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, height: 0, marginBottom: 0 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-2 flex items-center gap-2 overflow-hidden px-1"
-          >
-            <SanchoMascot size={22} />
-            <p className="font-mono text-[11px] tracking-widest text-zinc-500 dark:text-zinc-400">
-              {t.eyebrow}
-            </p>
-            <span
-              aria-hidden
-              className="h-1.5 w-1.5 rounded-full bg-roulette-teal [animation:dotpulse_1.6s_ease-in-out_infinite]"
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div
-        className="rounded-2xl border border-zinc-200 bg-white/70 backdrop-blur
-                   dark:border-white/10 dark:bg-white/[0.03]"
-      >
+    <div className="flex h-full w-full flex-col">
+      {/* Center: the only scrollable area */}
+      <div ref={scrollRef} className="sancho-scroll min-h-0 flex-1 overflow-y-auto">
         <AnimatePresence initial={false}>
-          {started && (
+          {!started && (
             <motion.div
-              key="thread"
-              initial={reduceMotion ? false : { height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
+              key="intro"
+              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -16, scale: 0.98 }}
               transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="overflow-hidden"
+              className="flex min-h-full flex-col items-center justify-center px-4"
             >
-              <div
-                ref={scrollRef}
-                aria-live="polite"
-                className="sancho-scroll max-h-[46vh] space-y-4 overflow-y-auto scroll-smooth p-4 sm:p-5 md:max-h-[52vh]"
-              >
-                {messages.map((m, i) => {
-                  if (m.role === 'user') {
-                    return (
-                      <motion.p
-                        key={i}
-                        initial={reduceMotion ? false : { opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="ml-auto w-fit max-w-[85%] rounded-xl bg-zinc-100 px-3 py-2
-                                   text-sm text-zinc-800 dark:bg-white/10 dark:text-zinc-100"
-                      >
-                        {m.content}
-                      </motion.p>
-                    )
-                  }
-                  const { text, cards } = parseAssistant(m.content)
-                  const isLast = i === messages.length - 1
-                  if (!text && !cards.length) return null
-                  return (
-                    <motion.div
-                      key={i}
-                      initial={reduceMotion ? false : { opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="flex max-w-[92%] gap-2.5"
-                    >
-                      <SanchoMascot size={20} className="mt-0.5 shrink-0" />
-                      <div className="min-w-0">
-                        <p className="whitespace-pre-wrap font-mono text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
-                          {text}
-                          {streaming && isLast && (
-                            <span
-                              aria-hidden
-                              className="ml-0.5 inline-block h-4 w-[7px] translate-y-[3px] bg-roulette-teal
-                                         [animation:dotpulse_1s_ease-in-out_infinite]"
-                            />
-                          )}
-                        </p>
-                        {(!streaming || !isLast) &&
-                          cards.map(kind => (
-                            <SanchoCard
-                              key={kind}
-                              kind={kind}
-                              es={es}
-                              onSchedule={() => submit(t.schedule)}
-                            />
-                          ))}
-                      </div>
-                    </motion.div>
-                  )
-                })}
-                {waitingFirstDelta && (
-                  <div className="flex items-center gap-2.5">
-                    <SanchoMascot
-                      size={20}
-                      className={reduceMotion ? '' : 'animate-bounce [animation-duration:1.2s]'}
-                    />
-                    <span className="flex gap-1" aria-hidden>
-                      {[0, 1, 2].map(d => (
+              {intro}
+              <div className="mt-6 flex items-center gap-2">
+                <SanchoMascot size={22} />
+                <p className="font-mono text-[11px] tracking-widest text-zinc-500 dark:text-zinc-400">
+                  {t.eyebrow}
+                </p>
+                <span
+                  aria-hidden
+                  className="h-1.5 w-1.5 rounded-full bg-roulette-teal [animation:dotpulse_1.6s_ease-in-out_infinite]"
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {started && (
+          <div aria-live="polite" className="mx-auto w-full max-w-2xl space-y-4 px-4 py-6 sm:px-6">
+            {messages.map((m, i) => {
+              if (m.role === 'user') {
+                return (
+                  <motion.p
+                    key={i}
+                    initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="ml-auto w-fit max-w-[85%] rounded-xl bg-zinc-100 px-3 py-2
+                               text-sm text-zinc-800 dark:bg-white/10 dark:text-zinc-100"
+                  >
+                    {m.content}
+                  </motion.p>
+                )
+              }
+              const { text, cards } = parseAssistant(m.content)
+              const isLast = i === messages.length - 1
+              if (!text && !cards.length) return null
+              return (
+                <motion.div
+                  key={i}
+                  initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="flex max-w-[92%] gap-2.5"
+                >
+                  <SanchoMascot size={20} className="mt-0.5 shrink-0" />
+                  <div className="min-w-0">
+                    <p className="whitespace-pre-wrap font-mono text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
+                      {text}
+                      {streaming && isLast && (
                         <span
-                          key={d}
-                          className="h-1.5 w-1.5 rounded-full bg-zinc-400 [animation:dotpulse_1.2s_ease-in-out_infinite] dark:bg-zinc-500"
-                          style={{ animationDelay: `${d * 0.2}s` }}
+                          aria-hidden
+                          className="ml-0.5 inline-block h-4 w-[7px] translate-y-[3px] bg-roulette-teal
+                                     [animation:dotpulse_1s_ease-in-out_infinite]"
+                        />
+                      )}
+                    </p>
+                    {(!streaming || !isLast) &&
+                      cards.map(kind => (
+                        <SanchoCard
+                          key={kind}
+                          kind={kind}
+                          es={es}
+                          onSchedule={() => submit(t.schedule)}
                         />
                       ))}
-                    </span>
                   </div>
-                )}
-                {error && (
-                  <p className="font-mono text-xs text-roulette-magenta">
-                    {error === 'rate_limited' ? t.rate_limited : t.unavailable}
-                  </p>
-                )}
+                </motion.div>
+              )
+            })}
+            {waitingFirstDelta && (
+              <div className="flex items-center gap-2.5">
+                <SanchoMascot
+                  size={20}
+                  className={reduceMotion ? '' : 'animate-bounce [animation-duration:1.2s]'}
+                />
+                <span className="flex gap-1" aria-hidden>
+                  {[0, 1, 2].map(d => (
+                    <span
+                      key={d}
+                      className="h-1.5 w-1.5 rounded-full bg-zinc-400 [animation:dotpulse_1.2s_ease-in-out_infinite] dark:bg-zinc-500"
+                      style={{ animationDelay: `${d * 0.2}s` }}
+                    />
+                  ))}
+                </span>
               </div>
+            )}
+            {error && (
+              <p className="font-mono text-xs text-roulette-magenta">
+                {error === 'rate_limited' ? t.rate_limited : t.unavailable}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Bottom dock: chips + input, always visible */}
+      <div className="shrink-0 px-4 pb-5 pt-2 sm:px-6">
+        <AnimatePresence initial={false}>
+          {!started && (
+            <motion.div
+              key="chips"
+              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, height: 0, marginBottom: 0 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="mx-auto mb-3 flex max-w-2xl flex-wrap justify-center gap-2 overflow-hidden"
+            >
+              {t.chips.map(chip => (
+                <button
+                  key={chip}
+                  type="button"
+                  onClick={() => submit(chip)}
+                  className="rounded-full border border-zinc-200 px-3 py-1.5 text-xs text-zinc-600
+                             transition hover:border-roulette-teal/60 hover:text-zinc-900
+                             dark:border-white/10 dark:text-zinc-400 dark:hover:border-roulette-teal/60
+                             dark:hover:text-white
+                             focus-visible:outline focus-visible:outline-2 focus-visible:outline-roulette-teal"
+                >
+                  {chip}
+                </button>
+              ))}
             </motion.div>
           )}
         </AnimatePresence>
@@ -206,9 +216,9 @@ export const SanchoChat = memo(function SanchoChat({ onStartedChange }: SanchoCh
             e.preventDefault()
             submit(input)
           }}
-          className={`flex items-center gap-2 p-2 pl-4 ${
-            started ? 'border-t border-zinc-200 dark:border-white/10' : ''
-          }`}
+          className="mx-auto flex w-full max-w-2xl items-center gap-2 rounded-2xl border
+                     border-zinc-200 bg-white/70 p-2 pl-4 backdrop-blur
+                     dark:border-white/10 dark:bg-white/[0.03]"
         >
           <span aria-hidden className="select-none font-mono text-base text-roulette-teal">
             ❯
@@ -236,25 +246,6 @@ export const SanchoChat = memo(function SanchoChat({ onStartedChange }: SanchoCh
           </button>
         </form>
       </div>
-
-      {!started && (
-        <div className="mt-3 flex flex-wrap justify-center gap-2">
-          {t.chips.map(chip => (
-            <button
-              key={chip}
-              type="button"
-              onClick={() => submit(chip)}
-              className="rounded-full border border-zinc-200 px-3 py-1.5 text-xs text-zinc-600
-                         transition hover:border-roulette-teal/60 hover:text-zinc-900
-                         dark:border-white/10 dark:text-zinc-400 dark:hover:border-roulette-teal/60
-                         dark:hover:text-white
-                         focus-visible:outline focus-visible:outline-2 focus-visible:outline-roulette-teal"
-            >
-              {chip}
-            </button>
-          ))}
-        </div>
-      )}
-    </motion.div>
+    </div>
   )
 })
