@@ -1,7 +1,7 @@
 import type { ChatMessage } from './guard';
 
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const MAX_OUTPUT_TOKENS = 600;
+const MAX_OUTPUT_TOKENS = 350;
 
 interface GroqStreamChunk {
   choices?: Array<{ delta?: { content?: string } }>;
@@ -38,7 +38,7 @@ export async function streamChat(
       model,
       stream: true,
       max_tokens: MAX_OUTPUT_TOKENS,
-      temperature: 0.7,
+      temperature: 0.6,
       messages: [{ role: 'system', content: systemPrompt }, ...messages],
     }),
   });

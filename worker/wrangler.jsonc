@@ -21,8 +21,11 @@
       }
     ]
   },
-  // Daily usage counter (global budget cap). Create with: wrangler kv namespace create USAGE
-  "kv_namespaces": [{ "binding": "USAGE", "id": "f06994e5823e456da029d653cce23b85" }],
+  // USAGE: daily message counter. LEADS: recruiter leads from the contact card.
+  "kv_namespaces": [
+    { "binding": "USAGE", "id": "f06994e5823e456da029d653cce23b85" },
+    { "binding": "LEADS", "id": "cfc83004ff8945839e153dd37028eec7" }
+  ],
   "vars": {
     "ALLOWED_ORIGINS": "https://esteban-sanchez-ortiz.github.io,http://localhost:5173,http://localhost:5175",
     "GROQ_MODEL": "llama-3.3-70b-versatile",

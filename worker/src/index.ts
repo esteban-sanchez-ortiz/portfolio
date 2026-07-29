@@ -1,6 +1,7 @@
 import { validateMessages, detectInjection } from './guard';
 import { buildSystemPrompt } from './prompt';
 import { streamChat } from './chat';
+import { validateLead, saveLead } from './leads';
 
 const BLOCKED_REPLY_ES = 'Buen intento, pero escudero fiel no cambia de amo. ¿Hablamos de Esteban?';
 const BLOCKED_REPLY_EN = "Nice try, but a loyal squire serves one master. Shall we talk about Esteban?";
@@ -53,7 +54,9 @@ export default {
       return new Response(null, { status: 204, headers: corsHeaders(origin) });
     }
 
-    if (url.pathname !== '/api/chat' || request.method !== 'POST') {
+    const isChat = url.pathname === '/api/chat' && request.method === 'POST';
+    const isLead = url.pathname === '/api/lead' && request.method === 'POST';
+    if (!isChat && !isLead) {
       return Response.json({ error: 'not_found' }, { status: 404 });
     }
     if (!origin) {
@@ -66,6 +69,15 @@ export default {
       if (!success) {
         console.log(JSON.stringify({ event: 'rate_limited', ip }));
         return withCors(Response.json({ error: 'rate_limited' }, { status: 429 }), origin);
+      }
+
+      if (isLead) {
+        const lead = validateLead(await request.json().catch(() => null));
+        if (!lead) {
+          return withCors(Response.json({ error: 'invalid_lead' }, { status: 400 }), origin);
+        }
+        await saveLead(env, lead);
+        return withCors(Response.json({ ok: true }, { status: 201 }), origin);
       }
 
       if (!(await underDailyCap(env, ctx))) {
