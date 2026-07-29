@@ -109,36 +109,54 @@ export const SanchoChat = memo(function SanchoChat({ intro }: SanchoChatProps) {
         )}
       </AnimatePresence>
 
-      {/* Center: the only scrollable area */}
+      {/* Top spacer: twin of the bottom one, centers the idle hero+input group */}
+      <AnimatePresence initial={false}>
+        {!started && (
+          <motion.div
+            key="top-spacer"
+            aria-hidden
+            layout={!reduceMotion}
+            style={{ flexGrow: 1 }}
+            exit={{ flexGrow: 0 }}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            className="shrink-0"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Idle hero content, outside the scroll area so the group centers exactly */}
+      <AnimatePresence initial={false}>
+        {!started && (
+          <motion.div
+            key="intro"
+            exit={
+              reduceMotion ? { opacity: 0 } : { opacity: 0, y: -16, scale: 0.98, height: 0 }
+            }
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="flex shrink-0 flex-col items-center overflow-hidden px-4"
+          >
+            {intro}
+            <div className="mt-6 flex flex-col items-center gap-3">
+              <SanchoMascot size={72} wave={!reduceMotion} />
+              <div
+                className="max-w-xs rounded-xl border border-zinc-200 bg-white/80 px-4 py-2 text-center
+                           backdrop-blur dark:border-white/10 dark:bg-white/[0.06] sm:max-w-none"
+              >
+                <p className="font-mono text-xs text-zinc-700 dark:text-zinc-200 sm:text-sm">
+                  {t.greeting}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Thread: the only scrollable area (collapsed while idle) */}
       <motion.div
         layout={!reduceMotion}
         ref={scrollRef}
-        className="sancho-scroll relative min-h-0 flex-1 overflow-y-auto"
+        className={`sancho-scroll relative overflow-y-auto ${started ? 'min-h-0 flex-1' : 'h-0'}`}
       >
-        <AnimatePresence initial={false}>
-          {!started && (
-            <motion.div
-              key="intro"
-              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -16, scale: 0.98 }}
-              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="flex min-h-full flex-col items-center justify-center px-4"
-            >
-              {intro}
-              <div className="mt-6 flex flex-col items-center gap-3">
-                <SanchoMascot size={72} wave={!reduceMotion} />
-                <div
-                  className="max-w-xs rounded-xl border border-zinc-200 bg-white/80 px-4 py-2 text-center
-                             backdrop-blur dark:border-white/10 dark:bg-white/[0.06] sm:max-w-none"
-                >
-                  <p className="font-mono text-xs text-zinc-700 dark:text-zinc-200 sm:text-sm">
-                    {t.greeting}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {started && (
           <div aria-live="polite" className="mx-auto w-full max-w-2xl space-y-4 px-4 py-6 sm:px-6">
             {messages.map((m, i) => {
@@ -294,7 +312,7 @@ export const SanchoChat = memo(function SanchoChat({ intro }: SanchoChatProps) {
             key="dock-spacer"
             aria-hidden
             layout={!reduceMotion}
-            style={{ flexGrow: 0.85 }}
+            style={{ flexGrow: 1 }}
             exit={reduceMotion ? { flexGrow: 0 } : { flexGrow: 0 }}
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             className="shrink-0"
