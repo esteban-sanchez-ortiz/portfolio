@@ -1,0 +1,4 @@
+# Copy to .dev.vars and enter keys locally. Never commit .dev.vars.
+FIREWORKS_API_KEY=
+GROQ_API_KEY=
+CANARY=choose-a-local-canary-not-the-production-one

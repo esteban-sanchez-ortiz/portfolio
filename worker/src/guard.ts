@@ -1,3 +1,5 @@
+import { stripUnsafeCharacters } from './sanitize'
+
 export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
@@ -34,9 +36,7 @@ export function validateMessages(body: unknown): ValidationResult {
     if (typeof content !== 'string') return { ok: false, error: 'invalid_content' };
 
     // Strip control characters (keep \n and \t); collapse zero-width chars used to smuggle text.
-    const sanitized = content
-      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F\u200B-\u200F\u2028\u2029\u202A-\u202E\uFEFF]/g, '')
-      .trim();
+    const sanitized = stripUnsafeCharacters(content).trim();
     if (sanitized.length === 0 || sanitized.length > MAX_MESSAGE_CHARS) {
       return { ok: false, error: 'message_too_long' };
     }
@@ -62,6 +62,7 @@ async function classifyOne(
 ): Promise<'malicious' | 'benign' | 'unknown'> {
   const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
+    signal: AbortSignal.timeout(3000),
     headers: {
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
@@ -104,6 +105,9 @@ export async function detectInjection(
   messages: ChatMessage[],
 ): Promise<boolean> {
   const userContents = messages.filter((m) => m.role === 'user').map((m) => m.content);
-  const verdicts = await Promise.all(userContents.map((c) => classifyOne(apiKey, model, c)));
+  const verdicts = await Promise.all(userContents.map((c) => classifyOne(apiKey, model, c).catch(() => {
+    console.log(JSON.stringify({ event: 'guard_transport_error' }));
+    return 'unknown' as const;
+  })));
   return verdicts.includes('malicious');
 }

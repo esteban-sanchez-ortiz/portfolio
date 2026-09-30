@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "sancho-chat-local",
+  "main": "src/local.ts",
+  "compatibility_date": "2026-07-28",
+  "compatibility_flags": ["nodejs_compat"],
+  "rules": [{ "type": "Text", "globs": ["**/*.md"], "fallthrough": true }],
+  "kv_namespaces": [
+    { "binding": "USAGE", "id": "local-usage" },
+    { "binding": "LEADS", "id": "local-leads" }
+  ],
+  "vars": {
+    "ALLOWED_ORIGINS": "http://localhost:5175,http://127.0.0.1:5175",
+    "CHAT_PROVIDER": "fireworks",
+    "FIREWORKS_MODEL": "accounts/fireworks/models/nemotron-lightning-3p5-30b-a3b",
+    "GROQ_MODEL": "openai/gpt-oss-20b",
+    "GROQ_FALLBACK_MODEL": "openai/gpt-oss-20b",
+    "GUARD_MODEL": "meta-llama/llama-prompt-guard-2-86m",
+    "DAILY_MESSAGE_CAP": "1500"
+  }
+}

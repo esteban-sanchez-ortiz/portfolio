@@ -26,7 +26,7 @@ export const BrandAvatar = ({ src, company }: { src: string; company: string }) 
       className={`relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full overflow-hidden ${bgClass}`}
     >
       <img
-        src={src}
+        src={`${import.meta.env.BASE_URL}${src}`}
         alt={`${company} logo`}
         className={[
           'h-full w-full object-contain p-1.5',

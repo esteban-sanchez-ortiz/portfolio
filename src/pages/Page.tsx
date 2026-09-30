@@ -16,7 +16,7 @@ export const Page = ({ title, children }: PageProps) => {
 
   return (
     <>
-      <main className="min-h-[70vh]">{children}</main>
+      <main id="main" tabIndex={-1} className="min-h-[70vh]"><h1 className="sr-only">{title}</h1>{children}</main>
       <Footer />
     </>
   )

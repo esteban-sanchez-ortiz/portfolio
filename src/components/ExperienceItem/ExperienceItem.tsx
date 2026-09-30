@@ -1,6 +1,8 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 
+import { useLanguage } from '../../i18n/Language'
+
 import type { ExperienceItemProps } from './ExperienceItem.types'
 
 import { BrandAvatar } from '@components'
@@ -17,6 +19,7 @@ export const ExperienceItem = ({
   image,
   url,
 }: ExperienceItemProps) => {
+  const es = useLanguage() === 'es'
   const ref = useRef<HTMLLIElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 85%', 'end 15%'] })
   const lift = useTransform(scrollYProgress, [0, 1], [0, -4 * INTENSITY])
@@ -27,7 +30,7 @@ export const ExperienceItem = ({
       ref={ref}
       style={{ y: lift }}
       className="relative flex gap-4 py-5"
-      initial={{ opacity: 0, y: 10 }}
+      initial={false}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-10% 0px -10% 0px' }}
       transition={{ type: 'spring', stiffness: 140, damping: 20 }}
@@ -77,7 +80,7 @@ export const ExperienceItem = ({
               transition-colors
             "
           >
-            Visit their site
+            {es ? 'Visitar su sitio' : 'Visit their site'}
             <svg width="14" height="14" viewBox="0 0 24 24" className="opacity-80">
               <path
                 fill="currentColor"

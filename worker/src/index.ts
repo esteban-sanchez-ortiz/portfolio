@@ -85,9 +85,14 @@ export default {
       }
       const { messages } = validation;
 
-      const hint = (body as { lang?: unknown } | null)?.lang === 'en' ? 'en' : 'es';
+      const selected = (body as { lang?: unknown } | null)?.lang;
+      const hint = selected === 'en' ? 'en' : 'es';
       const lastUser = messages[messages.length - 1]?.content ?? '';
-      const lang = detectLang(lastUser, hint);
+      const lang = selected === 'es' || selected === 'en' ? selected : detectLang(lastUser, hint);
+
+      if (!env.GROQ_API_KEY || !env.CANARY || (env.CHAT_PROVIDER === 'fireworks' && !env.FIREWORKS_API_KEY)) {
+        return withCors(Response.json({ error: 'provider_not_configured' }, { status: 503 }), origin);
+      }
 
       const injected = await detectInjection(env.GROQ_API_KEY, env.GUARD_MODEL, messages);
       if (injected) {
@@ -104,13 +109,12 @@ export default {
       }
 
       const systemPrompt = buildSystemPrompt(env.CANARY, lang);
+      const primary = env.CHAT_PROVIDER === 'fireworks'
+        ? { provider: 'fireworks' as const, model: env.FIREWORKS_MODEL, apiKey: env.FIREWORKS_API_KEY ?? '' }
+        : { provider: 'groq' as const, model: env.GROQ_MODEL, apiKey: env.GROQ_API_KEY };
       const response = await streamChat(
-        env.GROQ_API_KEY,
-        env.GROQ_MODEL,
-        env.GROQ_FALLBACK_MODEL,
-        systemPrompt,
-        messages,
-        env.CANARY,
+        [primary, { provider: 'groq', model: env.GROQ_FALLBACK_MODEL, apiKey: env.GROQ_API_KEY }],
+        systemPrompt, messages, env.CANARY,
       );
       return withCors(response, origin);
     } catch (err) {

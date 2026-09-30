@@ -1,3 +1,5 @@
+import { useLanguage } from '../../i18n/Language'
+
 import { CardProject, Icons } from '@components'
 import { type Project } from '@components'
 
@@ -28,23 +30,24 @@ const PROJECTS: Project[] = [
     demoUrl: 'https://esteban-sanchez-ortiz.github.io/portfolio',
     codeUrl: 'https://github.com/esteban-sanchez-ortiz/portfolio',
   },
-  { title: 'Next case study', blurb: 'Coming soon', tech: [], soon: true },
 ]
 
 export const Projects = () => {
+  const es = useLanguage() === 'es'
+  const projects = PROJECTS.map((p, i) => es ? { ...p, title: i === 1 ? 'Mi portafolio' : p.title, blurb: i === 0 ? 'Plataforma de permisos de datos con puntos y notificaciones en tiempo real.' : 'Mi trabajo y proyectos, con un asistente conversacional.' } : p)
   return (
     <section id="work" className="relative mx-auto max-w-6xl px-4 py-16">
       <header className="mb-8">
         <h2 className="text-3xl font-extrabold tracking-tight text-neutral-900 dark:text-white">
-          Portfolio
+          {es ? 'Proyectos' : 'Projects'}
         </h2>
         <p className="mt-2 text-neutral-700 dark:text-zinc-400">
-          A quick snapshot of what I build. More projects on the way.
+          {es ? 'Una selección de mi trabajo. Consulta el código para conocer cada proyecto.' : 'A selection of my work. Explore the code to learn about each project.'}
         </p>
       </header>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {PROJECTS.map(p => (
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        {projects.map(p => (
           <CardProject key={p.title} project={p} />
         ))}
       </div>

@@ -1,126 +1,112 @@
 import type { ChatMessage } from './guard';
 
-const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+export interface ChatTarget {
+  provider: 'groq' | 'fireworks';
+  model: string;
+  apiKey: string;
+}
+
+const ENDPOINTS = {
+  groq: 'https://api.groq.com/openai/v1/chat/completions',
+  fireworks: 'https://api.fireworks.ai/inference/v1/chat/completions',
+};
 const MAX_OUTPUT_TOKENS = 350;
+const ATTEMPT_TIMEOUT_MS = 15000;
+const recoverable = (status: number) => status === 404 || status === 408 || status === 429 || status >= 500;
+const sse = (data: unknown) => `data: ${JSON.stringify(data)}\n\n`;
 
-interface GroqStreamChunk {
-  choices?: Array<{ delta?: { content?: string } }>;
-}
-
-function sse(data: unknown): string {
-  return `data: ${JSON.stringify(data)}\n\n`;
-}
-
-/**
- * Stream a Sancho reply. Emits our own minimal SSE protocol:
- *   data: {"delta":"..."}   — text fragment
- *   data: {"error":"..."}   — terminal error
- *   data: [DONE]            — end of stream
- *
- * Every fragment passes through a canary scan on the accumulated text.
- * If the secret canary (or a system-prompt marker) appears, the stream is
- * killed immediately — the model is leaking its instructions.
- */
+/** At most one fallback, only before any answer text has been sent. Never log credentials or prompts. */
 export async function streamChat(
-  apiKey: string,
-  model: string,
-  fallbackModel: string | undefined,
+  targets: ChatTarget[],
   systemPrompt: string,
   messages: ChatMessage[],
   canary: string,
+  timeoutMs = ATTEMPT_TIMEOUT_MS,
 ): Promise<Response> {
-  const callGroq = (m: string) =>
-    fetch(GROQ_URL, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: m,
-        stream: true,
-        max_tokens: MAX_OUTPUT_TOKENS,
-        temperature: 0.6,
-        messages: [{ role: 'system', content: systemPrompt }, ...messages],
-      }),
-    });
-
-  let upstream = await callGroq(model);
-
-  // Graceful degradation: when the main model is rate-limited (e.g. free-tier
-  // daily token cap), fall back to the smaller model instead of failing.
-  if (!upstream.ok && upstream.status === 429 && fallbackModel) {
-    console.log(JSON.stringify({ event: 'groq_fallback', from: model, to: fallbackModel }));
-    upstream = await callGroq(fallbackModel);
+  if (!targets.length || !targets[0]?.apiKey) {
+    return Response.json({ error: 'provider_not_configured' }, { status: 503 });
   }
-
-  if (!upstream.ok || !upstream.body) {
-    console.log(JSON.stringify({ event: 'groq_error', status: upstream.status }));
-    return Response.json({ error: 'upstream_error' }, { status: 502 });
-  }
-
-  // Leak markers: the canary secret plus distinctive substrings of the prompt scaffold.
-  const leakMarkers = [canary, '[CANARY:', 'Hard rules (never break', 'untrusted input protocol'];
-
-  const reader = upstream.body.getReader();
-  const decoder = new TextDecoder();
   const encoder = new TextEncoder();
-
+  const markers = [canary, '[CANARY:', 'Hard rules (never break', 'untrusted input protocol'].filter(Boolean);
   const stream = new ReadableStream<Uint8Array>({
-    async start(controller) {
-      let buffer = '';
-      let accumulated = '';
-      let leaked = false;
-      try {
-        for (;;) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          buffer += decoder.decode(value, { stream: true });
-
-          const lines = buffer.split('\n');
-          buffer = lines.pop() ?? '';
-          for (const line of lines) {
-            const trimmed = line.trim();
-            if (!trimmed.startsWith('data:')) continue;
-            const payload = trimmed.slice(5).trim();
-            if (payload === '[DONE]') continue;
-            let delta = '';
-            try {
-              const parsed = JSON.parse(payload) as GroqStreamChunk;
-              delta = parsed.choices?.[0]?.delta?.content ?? '';
-            } catch {
-              continue;
+    async start(output) {
+      let emitted = false;
+      let blocked = false;
+      let completed = false;
+      for (const [i, target] of targets.slice(0, 2).entries()) {
+        if (!target.apiKey) continue;
+        const abort = new AbortController();
+        const timer = setTimeout(() => abort.abort(), timeoutMs);
+        let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
+        let retry = false;
+        let accumulated = '';
+        let providerDone = false;
+        try {
+          const response = await fetch(ENDPOINTS[target.provider], {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${target.apiKey}`, 'Content-Type': 'application/json' },
+            signal: abort.signal,
+            body: JSON.stringify({
+              model: target.model,
+              stream: true,
+              max_tokens: target.provider === 'groq' ? 1024 : MAX_OUTPUT_TOKENS,
+              temperature: 0.6,
+              ...(target.provider === 'groq' && target.model.startsWith('openai/gpt-oss-')
+                ? { reasoning_effort: 'low', include_reasoning: false } : {}),
+              ...(target.provider === 'fireworks' ? { reasoning_effort: 'none' } : {}),
+              messages: [{ role: 'system', content: systemPrompt }, ...messages],
+            }),
+          });
+          if (!response.ok || !response.body) {
+            console.log(JSON.stringify({ event: 'chat_upstream_error', provider: target.provider, model: target.model, status: response.status }));
+            retry = recoverable(response.status);
+            await response.body?.cancel();
+          } else {
+            reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+            const consume = (line: string) => {
+              if (!line.trim().startsWith('data:')) return;
+              const payload = line.trim().slice(5).trim();
+              if (payload === '[DONE]') { providerDone = true; return; }
+              const chunk = JSON.parse(payload) as { error?: unknown; choices?: { delta?: { content?: string }; finish_reason?: string | null }[] };
+              if (chunk.error) throw new Error('provider_stream_error');
+              // Separate reasoning/reasoning_content fields are intentionally ignored.
+              const delta = chunk.choices?.[0]?.delta?.content ?? '';
+              if (!delta) return;
+              accumulated += delta;
+              if (markers.some(marker => accumulated.includes(marker))) { blocked = true; return; }
+              emitted = true;
+              output.enqueue(encoder.encode(sse({ delta })));
+            };
+            while (!providerDone && !blocked) {
+              const { done, value } = await reader.read();
+              if (done) { buffer += decoder.decode(); if (buffer.trim()) consume(buffer); break; }
+              buffer += decoder.decode(value, { stream: true });
+              const lines = buffer.split('\n');
+              buffer = lines.pop() ?? '';
+              for (const line of lines) { consume(line); if (providerDone || blocked) break; }
             }
-            if (!delta) continue;
-            accumulated += delta;
-            if (leakMarkers.some((m) => accumulated.includes(m))) {
-              leaked = true;
-              break;
-            }
-            controller.enqueue(encoder.encode(sse({ delta })));
+            completed = providerDone && !!accumulated && !blocked;
+            if (completed) console.log(JSON.stringify({ event: 'chat_completed', provider: target.provider, model: target.model }));
+            retry = !completed && !blocked;
           }
-          if (leaked) break;
+        } catch {
+          console.log(JSON.stringify({ event: 'chat_transport_error', provider: target.provider, model: target.model, timeout: abort.signal.aborted }));
+          retry = true;
+        } finally {
+          clearTimeout(timer);
+          await reader?.cancel().catch(() => {});
         }
-      } catch (err) {
-        console.log(JSON.stringify({ event: 'stream_error', message: String(err) }));
-      } finally {
-        await reader.cancel().catch(() => {});
+        if (completed || blocked || emitted || !retry) break;
+        if (i === 0 && targets[1]?.apiKey) {
+          console.log(JSON.stringify({ event: 'chat_fallback', from: target.provider, to: targets[1].provider }));
+        }
       }
-
-      if (leaked) {
-        console.log(JSON.stringify({ event: 'canary_block' }));
-        controller.enqueue(encoder.encode(sse({ error: 'blocked' })));
-      }
-      controller.enqueue(encoder.encode('data: [DONE]\n\n'));
-      controller.close();
+      if (!completed) output.enqueue(encoder.encode(sse({ error: blocked ? 'blocked' : 'unavailable' })));
+      output.enqueue(encoder.encode('data: [DONE]\n\n'));
+      output.close();
     },
   });
-
-  return new Response(stream, {
-    headers: {
-      'Content-Type': 'text/event-stream; charset=utf-8',
-      'Cache-Control': 'no-store',
-      'X-Accel-Buffering': 'no',
-    },
-  });
+  return new Response(stream, { headers: { 'Content-Type': 'text/event-stream; charset=utf-8', 'Cache-Control': 'no-store', 'X-Accel-Buffering': 'no' } });
 }

@@ -1,3 +1,5 @@
+import { stripUnsafeCharacters } from './sanitize'
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
 interface LeadInput {
@@ -9,7 +11,7 @@ interface LeadInput {
 
 function sanitize(value: unknown, max: number): string | null {
   if (typeof value !== 'string') return null
-  const clean = value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F\u200B-\u200F\u2028\u2029\u202A-\u202E\uFEFF]/g, '').trim()
+  const clean = stripUnsafeCharacters(value).trim()
   return clean.length > 0 && clean.length <= max ? clean : null
 }
 

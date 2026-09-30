@@ -2,4 +2,7 @@
 interface Env {
   GROQ_API_KEY: string;
   CANARY: string;
+  FIREWORKS_API_KEY?: string;
+  CHAT_PROVIDER: "groq" | "fireworks";
+  FIREWORKS_MODEL: string;
 }

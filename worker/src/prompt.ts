@@ -14,7 +14,7 @@ export function buildSystemPrompt(canary: string, lang: 'es' | 'en'): string {
     ? systemPromptMd.replace(KNOWLEDGE_PLACEHOLDER, knowledgeMd)
     : `${systemPromptMd}\n\n${knowledgeMd}`;
   const language = lang === 'es' ? 'SPANISH' : 'ENGLISH';
-  return `${withKnowledge}\n\n[CANARY:${canary}]\n\nIMPORTANT: The visitor's last message is in ${language}. Reply ONLY in ${language}.`;
+  return `${withKnowledge}\n\n[CANARY:${canary}]\n\nIMPORTANT: The visitor selected ${language} on the portfolio. Understand questions in Spanish or English, but reply ONLY in ${language}.`;
 }
 
 const ES_SIGNALS =

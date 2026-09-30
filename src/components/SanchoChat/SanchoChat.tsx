@@ -1,6 +1,8 @@
 import { memo, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 
+import { useLanguage } from '../../i18n/Language'
+
 import { SanchoCard } from './SanchoCard'
 import { SanchoMascot } from './SanchoMascot'
 import { CARD_TOKEN_RE, type CardKind } from './cards.data'
@@ -13,9 +15,10 @@ const COPY = {
     greeting: '¡Hola! Soy Sancho, el escudero digital de Esteban. Pregúntame lo que quieras 👇',
     placeholder: 'Pregúntale a Sancho sobre Esteban…',
     send: 'Enviar',
+    retry: 'Reintentar',
     chips: ['¿Qué stack domina?', '¿Ha liderado equipos?', '¿Está abierto a ofertas?'],
     rate_limited: 'Sancho recupera el aliento. Intenta en unos segundos.',
-    unavailable: 'Sancho se enredó con los molinos. Intenta de nuevo.',
+    unavailable: 'No pude completar la respuesta. Puedes reintentar o contactar directamente a Esteban.',
     schedule: 'Quiero agendar una entrevista con Esteban',
   },
   en: {
@@ -23,9 +26,10 @@ const COPY = {
     greeting: "Hi! I'm Sancho, Esteban's digital squire. Ask me anything 👇",
     placeholder: 'Ask Sancho about Esteban…',
     send: 'Send',
+    retry: 'Retry',
     chips: ['What stack does he master?', 'Has he led teams?', 'Is he open to offers?'],
     rate_limited: 'Sancho is catching his breath. Try again in a few seconds.',
-    unavailable: 'Sancho got tangled with the windmills. Try again.',
+    unavailable: 'I couldn’t complete the reply. You can retry or contact Esteban directly.',
     schedule: 'I want to schedule an interview with Esteban',
   },
 } as const
@@ -53,13 +57,13 @@ interface SanchoChatProps {
  * that scrolls), input docked at the bottom, intro centered until first message.
  */
 export const SanchoChat = memo(function SanchoChat({ intro }: SanchoChatProps) {
-  const { messages, status, error, send } = useSanchoChat()
+  const { messages, status, error, send, retry } = useSanchoChat()
   const [input, setInput] = useState('')
   const reduceMotion = useReducedMotion()
   const scrollRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const es = useMemo(() => navigator.language.toLowerCase().startsWith('es'), [])
+  const es = useLanguage() === 'es'
   const t = es ? COPY.es : COPY.en
 
   // Parse every assistant message once, deduplicating cards across the whole
@@ -93,7 +97,7 @@ export const SanchoChat = memo(function SanchoChat({ intro }: SanchoChatProps) {
   }
 
   return (
-    <div className="relative flex h-full w-full flex-col">
+    <div className={`relative flex w-full flex-col ${started ? "h-[min(680px,calc(100dvh-120px))] min-h-[400px]" : ""}`} lang={es ? 'es' : 'en'}>
       {/* Legibility scrim: mutes the background blobs while chatting */}
       <AnimatePresence initial={false}>
         {started && (
@@ -116,7 +120,7 @@ export const SanchoChat = memo(function SanchoChat({ intro }: SanchoChatProps) {
             key="top-spacer"
             aria-hidden
             layout={!reduceMotion}
-            style={{ flexGrow: 1 }}
+            style={{ flexGrow: 0 }}
             exit={{ flexGrow: 0 }}
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             className="shrink-0"
@@ -136,8 +140,8 @@ export const SanchoChat = memo(function SanchoChat({ intro }: SanchoChatProps) {
             className="flex shrink-0 flex-col items-center overflow-hidden px-4"
           >
             {intro}
-            <div className="mt-6 flex flex-col items-center gap-3">
-              <SanchoMascot size={72} wave={!reduceMotion} />
+            <div className="mt-5 flex flex-col items-center gap-3">
+              <SanchoMascot size={48} wave={!reduceMotion} />
               <div
                 className="max-w-xs rounded-xl border border-zinc-200 bg-white/80 px-4 py-2 text-center
                            backdrop-blur dark:border-white/10 dark:bg-white/[0.06] sm:max-w-none"
@@ -151,11 +155,12 @@ export const SanchoChat = memo(function SanchoChat({ intro }: SanchoChatProps) {
         )}
       </AnimatePresence>
 
+      {started && <div className="relative flex items-center gap-3 px-5 pb-4"><SanchoMascot size={32} /><div><h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{es ? 'Conversa con Sancho' : 'Talk with Sancho'}</h1><p className="text-xs text-zinc-500">{es ? 'Sobre Esteban, su trabajo y tus proyectos' : 'About Esteban, his work and your projects'}</p></div></div>}
       {/* Thread: the only scrollable area (collapsed while idle) */}
       <motion.div
         layout={!reduceMotion}
         ref={scrollRef}
-        className={`sancho-scroll relative overflow-y-auto ${started ? 'min-h-0 flex-1' : 'h-0'}`}
+        className={`sancho-scroll relative overflow-y-auto ${started ? 'min-h-0 flex-1 rounded-t-2xl border border-b-0 border-zinc-200 bg-white/75 dark:border-white/10 dark:bg-black/60' : 'h-0'}`}
       >
         {started && (
           <div aria-live="polite" className="mx-auto w-full max-w-2xl space-y-4 px-4 py-6 sm:px-6">
@@ -228,9 +233,10 @@ export const SanchoChat = memo(function SanchoChat({ intro }: SanchoChatProps) {
               </div>
             )}
             {error && (
-              <p className="font-mono text-xs text-roulette-magenta">
-                {error === 'rate_limited' ? t.rate_limited : t.unavailable}
-              </p>
+              <div className="flex flex-wrap items-center gap-3 rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-700 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300">
+                <p role="alert" className="w-full leading-relaxed">{error === 'rate_limited' ? t.rate_limited : t.unavailable}</p>
+                <button type="button" onClick={() => void retry()} className="rounded-lg bg-roulette-teal/15 px-4 py-2 font-medium text-teal-800 transition hover:bg-roulette-teal/25 dark:text-teal-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-roulette-teal">{t.retry}</button><a href="mailto:esteban.sanchez.nt@gmail.com" className="rounded px-2 py-2 text-sm underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-roulette-teal">{es ? "Contactar a Esteban" : "Contact Esteban"}</a>
+              </div>
             )}
           </div>
         )}
@@ -238,7 +244,7 @@ export const SanchoChat = memo(function SanchoChat({ intro }: SanchoChatProps) {
 
       {/* Bottom dock: chips + input. Starts at the vertical center (spacer
           below), slides to the bottom when the conversation begins. */}
-      <motion.div layout={!reduceMotion} className="relative shrink-0 px-4 pb-5 pt-2 sm:px-6">
+      <motion.div layout={!reduceMotion} className={`relative shrink-0 pt-3 ${started ? "rounded-b-2xl border border-t-0 border-zinc-200 bg-white/75 p-4 dark:border-white/10 dark:bg-black/60" : "px-4 pb-5 sm:px-6"}`}>
         <AnimatePresence initial={false}>
           {!started && (
             <motion.div
@@ -312,7 +318,7 @@ export const SanchoChat = memo(function SanchoChat({ intro }: SanchoChatProps) {
             key="dock-spacer"
             aria-hidden
             layout={!reduceMotion}
-            style={{ flexGrow: 1 }}
+            style={{ flexGrow: 0 }}
             exit={reduceMotion ? { flexGrow: 0 } : { flexGrow: 0 }}
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             className="shrink-0"

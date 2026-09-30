@@ -67,3 +67,18 @@ npm run build
 
 ## 📄 License
 This project is licensed under the MIT License — see the [LICENSE](./LICENSE) file for details.
+
+
+## Idiomas, HTML estático y pruebas
+
+`npm run build` genera diez rutas HTML en `/portfolio/en/` y `/portfolio/es/`, con canonical propio, hreflang recíproco y sitemap. Las cinco entradas antiguas redirigen a inglés. El navegador hidrata el HTML. No se necesita fallback SPA para estas rutas. No cambiamos preferencias de bots.
+
+`npm run lint`, `npm run build` y `node --test tests/chat.test.mjs` verifican código y streaming. Las pruebas automatizadas simulan proveedores; las conversaciones reales se prueban exclusivamente con el backend local.
+
+La preview local nunca llama automáticamente al Worker público: utiliza `http://localhost:8787`. En `worker`, copiar `.dev.vars.example` a `.dev.vars` e introducir claves directamente en el editor; no compartirlas por chat. Ejecutar `npm ci`, luego `npm run dev:local`. KV y rate limiter son locales y no modifican producción. No usar `--remote` para pruebas. Fireworks es el proveedor principal; Groq conserva guard y respaldo.
+
+GitHub Actions actual publica el frontend en Pages después de push a main. El Worker tiene despliegue separado documentado en `worker/README.md`; este cambio no crea un pipeline alternativo. Las pruebas funcionales se hacen antes de publicar. La verificación posterior solo revisa artefactos/versiones y HTTP estático.
+
+Contenido pendiente de confirmar: títulos/fechas educativas, empleos recientes y métricas del CV. No se publican esas métricas ni se atribuyen ventas a Amparo.
+
+El flujo CI/CD y la configuración manual mínima están documentados en [docs/deployment.md](docs/deployment.md).

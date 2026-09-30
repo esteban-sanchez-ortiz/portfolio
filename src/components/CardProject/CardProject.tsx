@@ -1,8 +1,11 @@
 import { motion } from 'framer-motion'
 
+import { useLanguage } from '../../i18n/Language'
+
 import { type CardProjectProps } from './CardProject.types'
 
 export const CardProject = ({ project }: CardProjectProps) => {
+  const es = useLanguage() === 'es'
   if (project.soon) {
     return (
       <div
@@ -32,7 +35,7 @@ export const CardProject = ({ project }: CardProjectProps) => {
               text-xs text-neutral-500 dark:text-zinc-500
             "
           >
-            Soon
+            {es ? 'Próximamente' : 'Soon'}
           </div>
         </div>
       </div>
@@ -53,8 +56,8 @@ export const CardProject = ({ project }: CardProjectProps) => {
       {project.image && (
         <div className="relative aspect-[16/10] w-full overflow-hidden">
           <img
-            src={project.image}
-            alt={`${project.title} cover`}
+            src={`${import.meta.env.BASE_URL}${project.image}`}
+            alt={es ? `Imagen de ${project.title}` : `${project.title} cover`}
             loading="lazy"
             className="
               h-full w-full object-cover transition duration-500
@@ -102,7 +105,7 @@ export const CardProject = ({ project }: CardProjectProps) => {
                 hover:opacity-90 transition-colors
               "
             >
-              Live Demo
+              {es ? 'Ver proyecto' : 'View project'}
             </a>
           )}
           {project.codeUrl && (
@@ -119,7 +122,7 @@ export const CardProject = ({ project }: CardProjectProps) => {
                 transition-colors
               "
             >
-              View Code
+              {es ? 'Ver código' : 'View code'}
             </a>
           )}
         </div>

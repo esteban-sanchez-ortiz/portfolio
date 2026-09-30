@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 
+import { API_URL } from '../../api'
+
 import { AVAILABILITY, EXPERIENCE, PROJECTS, type CardKind } from './cards.data'
 
-const API_URL =
-  (import.meta.env.VITE_SANCHO_API as string | undefined) ??
-  'https://sancho-chat.esteban-sanchez-nt.workers.dev'
+
 
 const COPY = {
   es: {
@@ -37,10 +37,10 @@ const cardShell =
   'dark:border-white/10 dark:bg-white/[0.04]'
 const label = 'font-mono text-[10px] uppercase tracking-widest text-zinc-400 dark:text-zinc-500'
 
-function ExperienceCard() {
+function ExperienceCard({ es }: { es: boolean }) {
   return (
     <div className={cardShell}>
-      <p className={label}>Experience</p>
+      <p className={label}>{es ? 'Experiencia' : 'Experience'}</p>
       <ul className="mt-2 space-y-2">
         {EXPERIENCE.map(e => (
           <li key={e.company} className="flex items-baseline justify-between gap-3">
@@ -49,10 +49,10 @@ function ExperienceCard() {
                 {e.company}
               </p>
               <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">
-                {e.role} · {e.stack}
+                {es ? (e.role === 'Front-End Engineer' ? 'Ingeniero frontend' : 'Desarrollador frontend') : e.role} · {e.stack}
               </p>
             </div>
-            <span className="shrink-0 font-mono text-[11px] text-roulette-teal">{e.period}</span>
+            <span className="shrink-0 font-mono text-[11px] text-roulette-teal">{es ? e.period.replace('now', 'actualidad') : e.period}</span>
           </li>
         ))}
       </ul>
@@ -60,10 +60,10 @@ function ExperienceCard() {
   )
 }
 
-function ProjectsCard() {
+function ProjectsCard({ es }: { es: boolean }) {
   return (
     <div className={cardShell}>
-      <p className={label}>Projects</p>
+      <p className={label}>{es ? 'Proyectos' : 'Projects'}</p>
       <ul className="mt-2 space-y-3">
         {PROJECTS.map(p => (
           <li key={p.name}>
@@ -74,9 +74,9 @@ function ProjectsCard() {
               className="group block rounded-lg p-2 -m-2 transition hover:bg-zinc-100 dark:hover:bg-white/5"
             >
               <p className="text-sm font-medium text-zinc-800 group-hover:underline dark:text-zinc-100">
-                {p.name} <span aria-hidden>↗</span>
+                {es && p.name === 'This portfolio' ? 'Este portafolio' : p.name} <span aria-hidden>↗</span>
               </p>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">{p.desc}</p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">{es ? (p.name === 'Grantly' ? 'Plataforma de permisos de datos personales con puntos y recompensas' : 'Portafolio con un asistente conversacional') : p.desc}</p>
               <p className="mt-0.5 font-mono text-[11px] text-roulette-teal">{p.stack}</p>
             </a>
           </li>
@@ -93,10 +93,10 @@ function AvailabilityCard({ es, onSchedule }: { es: boolean; onSchedule: () => v
       <p className={label}>{es ? 'Disponibilidad' : 'Availability'}</p>
       <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1">
         <span className="font-mono text-sm text-zinc-800 dark:text-zinc-100">
-          {AVAILABILITY.window}
+          {es ? 'Horario a acordar' : 'By arrangement'}
         </span>
         <span className="text-xs text-zinc-500 dark:text-zinc-400">{AVAILABILITY.tz}</span>
-        <span className="text-xs text-roulette-teal">{AVAILABILITY.mode}</span>
+        <span className="text-xs text-roulette-teal">{es ? 'Remoto' : 'Remote'}</span>
       </div>
       <button
         type="button"
@@ -123,7 +123,7 @@ function ContactCard({ es }: { es: boolean }) {
   if (state === 'sent') {
     return (
       <div className={cardShell}>
-        <p className="font-mono text-sm text-roulette-teal">{t.sent}</p>
+        <p role="status" className="font-mono text-sm text-roulette-teal">{t.sent}</p>
       </div>
     )
   }
@@ -155,22 +155,22 @@ function ContactCard({ es }: { es: boolean }) {
     >
       <p className={label}>{es ? 'Contacto' : 'Contact'}</p>
       <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <input name="name" required maxLength={80} placeholder={t.name} className={inputCls} />
-        <input name="company" required maxLength={120} placeholder={t.company} className={inputCls} />
+        <input name="name" required maxLength={80} aria-label={t.name} placeholder={t.name} className={inputCls} />
+        <input name="company" required maxLength={120} aria-label={t.company} placeholder={t.company} className={inputCls} />
       </div>
       <input
         name="email"
         type="email"
         required
         maxLength={120}
-        placeholder={t.email}
+        aria-label={t.email} placeholder={t.email}
         className={`${inputCls} mt-2`}
       />
       <textarea
         name="message"
         maxLength={500}
         rows={2}
-        placeholder={t.message}
+        aria-label={t.message} placeholder={t.message}
         className={`${inputCls} mt-2 resize-none`}
       />
       <div className="mt-3 flex items-center gap-3">
@@ -184,7 +184,7 @@ function ContactCard({ es }: { es: boolean }) {
           {state === 'sending' ? t.sending : t.send}
         </button>
         {state === 'failed' && (
-          <p className="text-xs text-roulette-magenta">{t.failed}</p>
+          <p role="alert" className="text-xs text-roulette-magenta">{t.failed}</p>
         )}
       </div>
     </form>
@@ -205,8 +205,8 @@ export const SanchoCard = ({ kind, es, onSchedule }: SanchoCardProps) => {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.35, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
     >
-      {kind === 'experience' && <ExperienceCard />}
-      {kind === 'projects' && <ProjectsCard />}
+      {kind === 'experience' && <ExperienceCard es={es} />}
+      {kind === 'projects' && <ProjectsCard es={es} />}
       {kind === 'availability' && <AvailabilityCard es={es} onSchedule={onSchedule} />}
       {kind === 'contact' && <ContactCard es={es} />}
     </motion.div>

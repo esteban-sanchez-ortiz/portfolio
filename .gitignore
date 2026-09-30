@@ -23,3 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 .wrangler/
+
+.prerender/
+.local-worker-state/
+.local-fallback-state/
+stats.html

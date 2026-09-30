@@ -1,120 +1,77 @@
-import { lazy, Suspense } from 'react'
-
 import type { IconComponent } from './Icons.types'
-const ReactIcon = lazy(() => import('@assets/icons/react.svg?react'))
-const LinkedInIcon = lazy(() => import('@assets/icons/linkedin.svg?react'))
-const PinIcon = lazy(() => import('@assets/icons/pin.svg?react'))
-const ClockIcon = lazy(() => import('@assets/icons/clock.svg?react'))
-const CheckIcon = lazy(() => import('@assets/icons/check.svg?react'))
-const TypescriptIcon = lazy(() => import('@assets/icons/typescript.svg?react'))
-const JavascriptIcon = lazy(() => import('@assets/icons/javascript.svg?react'))
-const TailwindcssIcon = lazy(() => import('@assets/icons/tailwindcss.svg?react'))
-const NodejsIcon = lazy(() => import('@assets/icons/nodejs.svg?react'))
-const PlaywrightIcon = lazy(() => import('@assets/icons/playwright.svg?react'))
-const JestIcon = lazy(() => import('@assets/icons/jest.svg?react'))
-const GraphqlIcon = lazy(() => import('@assets/icons/graphql.svg?react'))
-const PostgresqlIcon = lazy(() => import('@assets/icons/postgresql.svg?react'))
-const DockerIcon = lazy(() => import('@assets/icons/docker.svg?react'))
-const SendIcon = lazy(() => import('@assets/icons/send.svg?react'))
-const ViteIcon = lazy(() => import('@assets/icons/vite.svg?react'))
 
-const withColor =
-  (C: React.ComponentType<React.SVGProps<SVGSVGElement>>) =>
-  ({ color = 'currentColor', ...props }) => <C {...props} style={{ color }} />
+import ReactIcon from '@assets/icons/react.svg?react'
+import LinkedInIcon from '@assets/icons/linkedin.svg?react'
+import PinIcon from '@assets/icons/pin.svg?react'
+import ClockIcon from '@assets/icons/clock.svg?react'
+import CheckIcon from '@assets/icons/check.svg?react'
+import TypescriptIcon from '@assets/icons/typescript.svg?react'
+import JavascriptIcon from '@assets/icons/javascript.svg?react'
+import TailwindcssIcon from '@assets/icons/tailwindcss.svg?react'
+import NodejsIcon from '@assets/icons/nodejs.svg?react'
+import PlaywrightIcon from '@assets/icons/playwright.svg?react'
+import JestIcon from '@assets/icons/jest.svg?react'
+import GraphqlIcon from '@assets/icons/graphql.svg?react'
+import PostgresqlIcon from '@assets/icons/postgresql.svg?react'
+import DockerIcon from '@assets/icons/docker.svg?react'
+import SendIcon from '@assets/icons/send.svg?react'
+import ViteIcon from '@assets/icons/vite.svg?react'
+import GitIcon from '@assets/icons/git.svg?react'
+import GithubActionsIcon from '@assets/icons/github-actions.svg?react'
 
 export const Icons: IconComponent = {
-  LinkedIn: props => (
-    <Suspense fallback={<span className="inline-block w-5 h-5" />}>
-      {withColor(LinkedInIcon)(props)}
-    </Suspense>
+  LinkedIn: ({ color = 'currentColor', ...props }) => (
+    <LinkedInIcon {...props} aria-hidden="true" style={{ color }} />
   ),
-
-  React: props => (
-    <Suspense fallback={<span className="inline-block w-5 h-5" />}>
-      {withColor(ReactIcon)(props)}
-    </Suspense>
+  React: ({ color = 'currentColor', ...props }) => (
+    <ReactIcon {...props} aria-hidden="true" style={{ color }} />
   ),
-
-  Pin: props => (
-    <Suspense fallback={<span className="inline-block w-5 h-5" />}>
-      {withColor(PinIcon)(props)}
-    </Suspense>
+  Pin: ({ color = 'currentColor', ...props }) => (
+    <PinIcon {...props} aria-hidden="true" style={{ color }} />
   ),
-
-  Clock: props => (
-    <Suspense fallback={<span className="inline-block w-5 h-5" />}>
-      {withColor(ClockIcon)(props)}
-    </Suspense>
+  Clock: ({ color = 'currentColor', ...props }) => (
+    <ClockIcon {...props} aria-hidden="true" style={{ color }} />
   ),
-
-  Check: props => (
-    <Suspense fallback={<span className="inline-block w-5 h-5" />}>
-      {withColor(CheckIcon)(props)}
-    </Suspense>
+  Check: ({ color = 'currentColor', ...props }) => (
+    <CheckIcon {...props} aria-hidden="true" style={{ color }} />
   ),
-  Typescript: props => (
-    <Suspense fallback={<span className="inline-block w-5 h-5" />}>
-      {withColor(TypescriptIcon)(props)}
-    </Suspense>
+  Typescript: ({ color = 'currentColor', ...props }) => (
+    <TypescriptIcon {...props} aria-hidden="true" style={{ color }} />
   ),
-  Javascript: props => (
-    <Suspense fallback={<span className="inline-block w-5 h-5" />}>
-      {withColor(JavascriptIcon)(props)}
-    </Suspense>
+  Javascript: ({ color = 'currentColor', ...props }) => (
+    <JavascriptIcon {...props} aria-hidden="true" style={{ color }} />
   ),
-  Tailwindcss: props => (
-    <Suspense fallback={<span className="inline-block w-5 h-5" />}>
-      {withColor(TailwindcssIcon)(props)}
-    </Suspense>
+  Tailwindcss: ({ color = 'currentColor', ...props }) => (
+    <TailwindcssIcon {...props} aria-hidden="true" style={{ color }} />
   ),
-  Nodejs: props => (
-    <Suspense fallback={<span className="inline-block w-5 h-5" />}>
-      {withColor(NodejsIcon)(props)}
-    </Suspense>
+  Nodejs: ({ color = 'currentColor', ...props }) => (
+    <NodejsIcon {...props} aria-hidden="true" style={{ color }} />
   ),
-  Playwright: props => (
-    <Suspense fallback={<span className="inline-block w-5 h-5" />}>
-      {withColor(PlaywrightIcon)(props)}
-    </Suspense>
+  Playwright: ({ color = 'currentColor', ...props }) => (
+    <PlaywrightIcon {...props} aria-hidden="true" style={{ color }} />
   ),
-  Jest: props => (
-    <Suspense fallback={<span className="inline-block w-5 h-5" />}>
-      {withColor(JestIcon)(props)}
-    </Suspense>
+  Jest: ({ color = 'currentColor', ...props }) => (
+    <JestIcon {...props} aria-hidden="true" style={{ color }} />
   ),
-  Graphql: props => (
-    <Suspense fallback={<span className="inline-block w-5 h-5" />}>
-      {withColor(GraphqlIcon)(props)}
-    </Suspense>
+  Graphql: ({ color = 'currentColor', ...props }) => (
+    <GraphqlIcon {...props} aria-hidden="true" style={{ color }} />
   ),
-  Postgresql: props => (
-    <Suspense fallback={<span className="inline-block w-5 h-5" />}>
-      {withColor(PostgresqlIcon)(props)}
-    </Suspense>
+  Postgresql: ({ color = 'currentColor', ...props }) => (
+    <PostgresqlIcon {...props} aria-hidden="true" style={{ color }} />
   ),
-  Docker: props => (
-    <Suspense fallback={<span className="inline-block w-5 h-5" />}>
-      {withColor(DockerIcon)(props)}
-    </Suspense>
+  Docker: ({ color = 'currentColor', ...props }) => (
+    <DockerIcon {...props} aria-hidden="true" style={{ color }} />
   ),
-  Git: props => (
-    <Suspense fallback={<span className="inline-block w-5 h-5" />}>
-      {withColor(lazy(() => import('@assets/icons/git.svg?react')))(props)}
-    </Suspense>
+  Git: ({ color = 'currentColor', ...props }) => (
+    <GitIcon {...props} aria-hidden="true" style={{ color }} />
   ),
-  GithubActions: props => (
-    <Suspense fallback={<span className="inline-block w-5 h-5" />}>
-      {withColor(lazy(() => import('@assets/icons/github-actions.svg?react')))(props)}
-    </Suspense>
+  GithubActions: ({ color = 'currentColor', ...props }) => (
+    <GithubActionsIcon {...props} aria-hidden="true" style={{ color }} />
   ),
-  Send: props => (
-    <Suspense fallback={<span className="inline-block w-5 h-5" />}>
-      {withColor(SendIcon)(props)}
-    </Suspense>
+  Send: ({ color = 'currentColor', ...props }) => (
+    <SendIcon {...props} aria-hidden="true" style={{ color }} />
   ),
-  Vite: props => (
-    <Suspense fallback={<span className="inline-block w-5 h-5" />}>
-      {withColor(ViteIcon)(props)}
-    </Suspense>
+  Vite: ({ color = 'currentColor', ...props }) => (
+    <ViteIcon {...props} aria-hidden="true" style={{ color }} />
   ),
 }
