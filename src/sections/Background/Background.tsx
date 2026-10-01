@@ -41,18 +41,15 @@ export const Background = () => {
       aria-hidden
       className="pointer-events-none fixed inset-0 z-0 overflow-hidden [contain:layout_paint_size_style]"
     >
-      {!reduceMotion && (
-        <div className="absolute inset-0">
+      <div className="absolute inset-0 motion-reduce:hidden">
           <SparklesLayer count={28} seed={77} />
-        </div>
-      )}
+      </div>
 
-      {!reduceMotion &&
-        BLOBS.map(b => (
+      {BLOBS.map(b => (
           <motion.div
             key={b.id}
-            className={`${b.className} [will-change:transform,opacity] transform-gpu`}
-            animate={b.animate}
+            className={`${b.className} [will-change:transform,opacity] transform-gpu motion-reduce:hidden`}
+            animate={reduceMotion ? undefined : b.animate}
             transition={{ repeat: Infinity, ease: 'easeInOut', duration: b.duration }}
           />
         ))}

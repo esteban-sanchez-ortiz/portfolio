@@ -57,14 +57,14 @@ export const CardProject = ({ project }: CardProjectProps) => {
         <div className="relative aspect-[16/10] w-full overflow-hidden">
           <img
             src={`${import.meta.env.BASE_URL}${project.image}`}
-            alt={es ? `Imagen de ${project.title}` : `${project.title} cover`}
+            alt={project.imageAlt ?? (es ? `Imagen de ${project.title}` : `${project.title} cover`)}
             loading="lazy"
-            className="
-              h-full w-full object-cover transition duration-500
+            className={`
+              h-full w-full ${project.image === 'portfolio-sancho.jpg' ? 'object-contain bg-zinc-950' : 'object-cover'} transition duration-500
               saturate-100 brightness-100
               group-hover:scale-[1.02] group-hover:saturate-110
               dark:saturate-90 dark:brightness-95
-            "
+            `}
           />
         </div>
       )}

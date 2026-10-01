@@ -1,42 +1,13 @@
-import { motion } from 'framer-motion'
-
 import { useLanguage } from '../../i18n/Language'
-
-import { Icons } from '@components'
 
 export const CTA = () => {
   const es = useLanguage() === 'es'
   return (
-    <motion.a
-      href="mailto:esteban.sanchez.nt@gmail.com"
-      initial={false}
-      whileInView={{ scale: 1 }}
-      transition={{ duration: 0.4 }}
-      viewport={{ once: true }}
-      className="group focus-visible:outline focus-visible:outline-2 focus-visible:outline-roulette-teal"
-    >
-      <section className="border-y border-neutral-300 dark:border-neutral-800 py-12">
-        <div className="max-w-5xl mx-auto px-6 flex items-center justify-between text-neutral-900 dark:text-white">
-          <motion.h2
-            initial={false}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4 }}
-            viewport={{ once: true }}
-            className="text-3xl font-bold"
-          >
-            {es ? 'Trabajemos ' : 'Let’s work '}<span className="text-neutral-600 dark:text-neutral-500">{es ? 'juntos.' : 'together.'}</span>
-          </motion.h2>
-          <div
-            className="
-  bg-emerald-600 dark:bg-neutral-600
-  group-hover:bg-emerald-500 dark:group-hover:bg-neutral-500
-  transition-colors rounded-full p-4 text-white
-"
-          >
-            <Icons.Send className="w-5 h-5" />
-          </div>
-        </div>
-      </section>
-    </motion.a>
+    <section className="mx-auto max-w-3xl border-y border-neutral-300 px-6 py-12 dark:border-neutral-800 sm:py-16">
+      <h2 className="text-3xl font-bold text-neutral-900 dark:text-white">{es ? 'Hablemos de tu proyecto' : 'Let’s discuss your project'}</h2>
+      <p className="mt-4 max-w-xl text-base leading-relaxed text-neutral-700 dark:text-zinc-400">{es ? '¿Necesitas desarrollar software o automatizar un proceso? Cuéntame qué quieres resolver y el alcance que tienes en mente.' : 'Need to build software or automate a process? Tell me what you want to solve and the scope you have in mind.'}</p>
+      <a href="mailto:esteban.sanchez.nt@gmail.com" className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full bg-teal-300 px-5 py-3 text-sm font-semibold text-zinc-950 transition hover:bg-teal-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-roulette-teal">{es ? 'Escríbeme por correo' : 'Email me'}<span aria-hidden>↗</span></a>
+      <p className="mt-4 break-all text-sm text-neutral-600 dark:text-zinc-400">esteban.sanchez.nt@gmail.com</p>
+    </section>
   )
 }

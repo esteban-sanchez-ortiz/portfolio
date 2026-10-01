@@ -13,7 +13,8 @@ export const Hero = memo(function Hero({
   imgSrc,
   imgAlt = 'Portrait',
 }: HeroProps) {
-  const es = useLanguage() === 'es'
+  const lang = useLanguage()
+  const es = lang === 'es'
   const reduceMotion = useReducedMotion()
 
   const intro = (
@@ -54,7 +55,10 @@ export const Hero = memo(function Hero({
         <p className="mx-auto mt-4 max-w-xl text-center text-base leading-relaxed text-zinc-600 dark:text-zinc-400 sm:text-lg">{line2}</p>
       </div>
 
-      <a href="mailto:esteban.sanchez.nt@gmail.com" className="mt-3 text-sm text-teal-700 dark:text-teal-300 underline focus-visible:outline focus-visible:outline-2">{es ? 'Hablemos de tu proyecto' : 'Let’s discuss your project'}</a>
+      <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+        <a href="mailto:esteban.sanchez.nt@gmail.com" className="inline-flex min-h-11 items-center justify-center rounded-full bg-teal-300 px-5 py-2.5 text-sm font-semibold text-zinc-950 transition hover:bg-teal-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-roulette-teal">{es ? 'Hablemos de tu proyecto' : 'Let’s discuss your project'}<span aria-hidden className="ml-2">↗</span></a>
+        <a href={`${import.meta.env.BASE_URL}${lang}/projects/`} className="inline-flex min-h-11 items-center justify-center rounded-full border border-zinc-300 px-5 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-roulette-teal dark:border-white/20 dark:text-zinc-200 dark:hover:bg-white/10">{es ? 'Explorar proyectos' : 'Explore projects'}<span aria-hidden className="ml-2">→</span></a>
+      </div>
       <div className="flex w-full justify-center">
         <TechStrip />
       </div>

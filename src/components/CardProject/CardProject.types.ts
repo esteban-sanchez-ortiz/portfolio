@@ -9,6 +9,7 @@ export type Project = {
   title: string
   blurb: string
   image?: string
+  imageAlt?: string
   tech: Tech[]
   demoUrl?: string
   codeUrl?: string

@@ -141,7 +141,7 @@ export const SanchoChat = memo(function SanchoChat({ intro }: SanchoChatProps) {
           >
             {intro}
             <div className="mt-5 flex flex-col items-center gap-3">
-              <SanchoMascot size={48} wave={!reduceMotion} />
+              <SanchoMascot size={48} wave />
               <div
                 className="max-w-xs rounded-xl border border-zinc-200 bg-white/80 px-4 py-2 text-center
                            backdrop-blur dark:border-white/10 dark:bg-white/[0.06] sm:max-w-none"

@@ -70,12 +70,12 @@ export const SanchoMascot = ({ size = 24, className, wave = false }: SanchoMasco
     ))}
     {wave && (
       <>
-        <g style={{ animation: 'sancho-frame-a 0.9s steps(1) infinite' }}>
+        <g className="motion-reduce:animate-none" style={{ animation: 'sancho-frame-a 0.9s steps(1) infinite' }}>
           {toPixels(ARM_UP).map(({ x, y, fill }, i) => (
             <rect key={i} x={x} y={y} width={1} height={1} fill={fill} />
           ))}
         </g>
-        <g style={{ animation: 'sancho-frame-b 0.9s steps(1) infinite' }}>
+        <g className="motion-reduce:hidden" style={{ animation: 'sancho-frame-b 0.9s steps(1) infinite' }}>
           {toPixels(ARM_MID).map(({ x, y, fill }, i) => (
             <rect key={i} x={x} y={y} width={1} height={1} fill={fill} />
           ))}

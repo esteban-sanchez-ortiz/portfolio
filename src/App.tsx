@@ -29,7 +29,7 @@ function App({ lang = 'en', path }: { lang?: Language; path?: string }) {
   return (
     <LanguageContext.Provider value={lang}>
     <Router base={`${BASE}/${lang}`} ssrPath={path}>
-      <div className="dark:bg-black egg">
+      <div className="min-h-dvh dark:bg-black egg">
         <Background />
         <div className="relative z-10">
           <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:bg-white focus:p-3">{lang === 'es' ? 'Saltar al contenido' : 'Skip to content'}</a>
